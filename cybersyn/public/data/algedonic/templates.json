@@ -1,0 +1,373 @@
+[
+  {
+    "id": "alg_abast_zona",
+    "origen": "ZONE",
+    "cond": {
+      "metric": "abastecimiento",
+      "op": "<",
+      "value": 45
+    },
+    "cooldownDias": 2,
+    "causa": "Abastecimiento de básicos cae a {valor} % en {lugar}.",
+    "opciones": [
+      {
+        "id": "reserva",
+        "texto": "Enviar reserva nacional (importación de emergencia)",
+        "duraMin": 60,
+        "costo": {
+          "divisas": 2
+        },
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.abastBonus",
+            "value": 12
+          }
+        ]
+      },
+      {
+        "id": "redirigir",
+        "texto": "Redirigir camiones desde Santiago",
+        "duraMin": 90,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.abastBonus",
+            "value": 8
+          },
+          {
+            "op": "delay",
+            "days": 1,
+            "effects": [
+              {
+                "op": "add",
+                "path": "zones.STGO.abastBonus",
+                "value": -4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "delegar",
+        "texto": "Delegar en la Junta local de abastecimiento",
+        "duraMin": 30,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.animo",
+            "value": 1
+          },
+          {
+            "op": "delay",
+            "days": 2,
+            "effects": [
+              {
+                "op": "add",
+                "path": "zones.$id.abastBonus",
+                "value": 5
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "autoOpcion": "delegar",
+    "alIgnorar": [
+      {
+        "op": "add",
+        "path": "zones.$id.animo",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "id": "alg_animo_zona",
+    "origen": "ZONE",
+    "cond": {
+      "metric": "animo",
+      "op": "<",
+      "value": 30
+    },
+    "cooldownDias": 3,
+    "causa": "Descontento abierto en {lugar}: ánimo en {valor}.",
+    "opciones": [
+      {
+        "id": "cabildo",
+        "texto": "Convocar cabildo con dirigentes vecinales",
+        "duraMin": 120,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.animo",
+            "value": 5
+          }
+        ]
+      },
+      {
+        "id": "envio",
+        "texto": "Envío extraordinario de básicos",
+        "duraMin": 60,
+        "costo": {
+          "divisas": 1.5
+        },
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.abastBonus",
+            "value": 6
+          },
+          {
+            "op": "add",
+            "path": "zones.$id.animo",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "orden",
+        "texto": "Reforzar presencia policial",
+        "duraMin": 30,
+        "costo": {
+          "capitalPolitico": 3
+        },
+        "efectos": [
+          {
+            "op": "add",
+            "path": "zones.$id.animo",
+            "value": -1
+          },
+          {
+            "op": "add",
+            "path": "hidden.autoritarismo",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "autoOpcion": "cabildo",
+    "alIgnorar": [
+      {
+        "op": "add",
+        "path": "zones.$id.animo",
+        "value": -2
+      },
+      {
+        "op": "add",
+        "path": "factions.cordones",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "alg_insumos_sector",
+    "origen": "SECTOR",
+    "cond": {
+      "metric": "insumosDias",
+      "op": "<",
+      "value": 1
+    },
+    "cooldownDias": 2,
+    "causa": "{lugar}: stock de insumos importados cubre {valor} días.",
+    "opciones": [
+      {
+        "id": "compra",
+        "texto": "Compra de emergencia en el exterior",
+        "duraMin": 60,
+        "costo": {
+          "divisas": 3
+        },
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.insumosDias",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "sustituir",
+        "texto": "Sustituir con insumos nacionales de menor calidad",
+        "duraMin": 120,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.insumosDias",
+            "value": 1
+          },
+          {
+            "op": "add",
+            "path": "sectors.$id.moral",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "delegar",
+        "texto": "Que los comités de producción racionen el stock",
+        "duraMin": 30,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.insumosDias",
+            "value": 0.5
+          },
+          {
+            "op": "add",
+            "path": "sectors.$id.moral",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "autoOpcion": "delegar",
+    "alIgnorar": [
+      {
+        "op": "add",
+        "path": "sectors.$id.moral",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "id": "alg_moral_sector",
+    "origen": "SECTOR",
+    "cond": {
+      "metric": "moral",
+      "op": "<",
+      "value": 40
+    },
+    "cooldownDias": 3,
+    "causa": "{lugar}: ausentismo y asambleas; moral en {valor}.",
+    "opciones": [
+      {
+        "id": "asamblea",
+        "texto": "Asistir a la asamblea y negociar",
+        "duraMin": 120,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.moral",
+            "value": 6
+          },
+          {
+            "op": "add",
+            "path": "factions.cordones",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "bono",
+        "texto": "Bono de producción",
+        "duraMin": 30,
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.moral",
+            "value": 9
+          },
+          {
+            "op": "add",
+            "path": "economy.ajustePrecios",
+            "value": 0.01
+          }
+        ]
+      },
+      {
+        "id": "mano_dura",
+        "texto": "Intervenir la dirección y sancionar",
+        "duraMin": 30,
+        "costo": {
+          "capitalPolitico": 4
+        },
+        "efectos": [
+          {
+            "op": "add",
+            "path": "sectors.$id.moral",
+            "value": -3
+          },
+          {
+            "op": "add",
+            "path": "hidden.autoritarismo",
+            "value": 3
+          },
+          {
+            "op": "add",
+            "path": "factions.cordones",
+            "value": -4
+          }
+        ]
+      }
+    ],
+    "autoOpcion": "asamblea",
+    "alIgnorar": [
+      {
+        "op": "add",
+        "path": "sectors.$id.moral",
+        "value": -2
+      }
+    ]
+  },
+  {
+    "id": "alg_averia_firma",
+    "origen": "FIRM",
+    "azar": true,
+    "cooldownDias": 4,
+    "causa": "{lugar}: avería detiene parte de la producción.",
+    "opciones": [
+      {
+        "id": "repuestos",
+        "texto": "Importar repuestos por vía aérea",
+        "duraMin": 45,
+        "costo": {
+          "divisas": 0.8
+        },
+        "efectos": [
+          {
+            "op": "set",
+            "path": "firms.$id.eficiencia",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "tecnicos",
+        "texto": "Enviar técnicos de la red",
+        "duraMin": 150,
+        "efectos": [
+          {
+            "op": "set",
+            "path": "firms.$id.eficiencia",
+            "value": 0.95
+          }
+        ]
+      },
+      {
+        "id": "delegar",
+        "texto": "Que los trabajadores reparen con lo que hay",
+        "duraMin": 60,
+        "efectos": [
+          {
+            "op": "set",
+            "path": "firms.$id.eficiencia",
+            "value": 0.8
+          },
+          {
+            "op": "add",
+            "path": "sectors.$sector.moral",
+            "value": 0.5
+          }
+        ]
+      }
+    ],
+    "autoOpcion": "delegar",
+    "alIgnorar": [
+      {
+        "op": "add",
+        "path": "firms.$id.eficiencia",
+        "value": -0.05
+      }
+    ]
+  }
+]

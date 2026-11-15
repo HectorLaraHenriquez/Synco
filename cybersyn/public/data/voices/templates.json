@@ -1,0 +1,142 @@
+{
+  "bienes": [
+    "aceite",
+    "pan",
+    "zapatos",
+    "leche",
+    "azúcar",
+    "parafina",
+    "harina",
+    "té"
+  ],
+  "dias": [
+    "lunes",
+    "martes",
+    "miércoles",
+    "jueves",
+    "viernes",
+    "sábado"
+  ],
+  "plantillas": [
+    {
+      "id": "v_abast_bajo",
+      "tono": "NEG",
+      "cond": {
+        "metric": "abastecimiento",
+        "op": "<",
+        "value": 40
+      },
+      "texto": "En {lugar} no hay {bien} desde el {dia}."
+    },
+    {
+      "id": "v_abast_medio",
+      "tono": "NEG",
+      "cond": {
+        "metric": "abastecimiento",
+        "op": "<",
+        "value": 60
+      },
+      "texto": "Tres horas de cola en {lugar} para llevarse medio kilo de {bien}."
+    },
+    {
+      "id": "v_inflacion",
+      "tono": "NEG",
+      "cond": {
+        "metric": "inflacion",
+        "op": ">",
+        "value": 10
+      },
+      "texto": "Con el sueldo de la quincena ya no alcanza ni para {bien}."
+    },
+    {
+      "id": "v_mercado_negro",
+      "tono": "NEG",
+      "cond": {
+        "metric": "mercadoNegro",
+        "op": ">",
+        "value": 25
+      },
+      "texto": "El {bien} aparece, pero por detrás del mostrador y al triple."
+    },
+    {
+      "id": "v_animo_bajo",
+      "tono": "NEG",
+      "cond": {
+        "metric": "animo",
+        "op": "<",
+        "value": 35
+      },
+      "texto": "En {lugar} ya nadie cree en los numeritos de la sala."
+    },
+    {
+      "id": "v_autoritarismo",
+      "tono": "NEG",
+      "cond": {
+        "metric": "autoritarismo",
+        "op": ">",
+        "value": 60
+      },
+      "texto": "Ya no se habla en la fábrica. Uno nunca sabe."
+    },
+    {
+      "id": "v_salario",
+      "tono": "NEG",
+      "cond": {
+        "metric": "salarioReal",
+        "op": "<",
+        "value": 0.9
+      },
+      "texto": "Trabajo lo mismo y compro menos. Así de simple."
+    },
+    {
+      "id": "v_cultura",
+      "tono": "POS",
+      "cond": {
+        "metric": "cultura",
+        "op": ">",
+        "value": 60
+      },
+      "texto": "Mi hijo aprendió a leer con los libros de la editorial."
+    },
+    {
+      "id": "v_animo_alto",
+      "tono": "POS",
+      "cond": {
+        "metric": "animo",
+        "op": ">",
+        "value": 70
+      },
+      "texto": "Por primera vez siento que alguien nos escucha."
+    },
+    {
+      "id": "v_abast_alto",
+      "tono": "POS",
+      "cond": {
+        "metric": "abastecimiento",
+        "op": ">",
+        "value": 80
+      },
+      "texto": "Esta semana llegó {bien} al almacén de {lugar} y alcanzó para todos."
+    },
+    {
+      "id": "v_neutral_neg",
+      "tono": "NEG",
+      "cond": {
+        "metric": "animo",
+        "op": "<",
+        "value": 101
+      },
+      "texto": "En {lugar} se aguanta, pero que no falte el {bien}."
+    },
+    {
+      "id": "v_neutral_pos",
+      "tono": "POS",
+      "cond": {
+        "metric": "animo",
+        "op": ">",
+        "value": 50
+      },
+      "texto": "En {lugar} la fábrica no ha parado un solo turno."
+    }
+  ]
+}

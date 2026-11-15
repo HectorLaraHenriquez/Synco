@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "tiempo": {
     "horasPorDia": 12,
     "horaInicio": 8,
@@ -34,7 +34,7 @@
   },
   "economia": {
     "shareExportCobre": 0.8,
-    "kCobre": 0.1,
+    "kCobre": 0.084,
     "importAlimentosUnidades": 10,
     "precioImportAlimento": 0.12,
     "presupuestoInsumosDia": 3.2,
@@ -92,7 +92,10 @@
     "w1": 1.0,
     "w2": 4,
     "w3": 10,
-    "ruido": 1
+    "ruido": 1,
+    "abastBonusDecay": 0.3,
+    "vocesMin": 3,
+    "vocesMax": 5
   },
   "escalas": {
     "divisasMax": 800,
@@ -112,5 +115,200 @@
     "metaMin": 0.8,
     "metaMax": 1.3,
     "precioMaxCambio": 0.3
+  },
+  "palancas": {
+    "minutosPorCambio": 10,
+    "retrasoDias": {
+      "precios": [
+        0,
+        0
+      ],
+      "asignacionDivisas": [
+        2,
+        4
+      ],
+      "metas": [
+        1,
+        1
+      ],
+      "reajusteSalarial": [
+        0,
+        0
+      ],
+      "emision": [
+        3,
+        3
+      ],
+      "shareExportCobre": [
+        5,
+        5
+      ],
+      "zonasPrioritarias": [
+        1,
+        1
+      ],
+      "fiscalizacion": [
+        1,
+        1
+      ],
+      "inversiones": [
+        0,
+        0
+      ],
+      "autonomia": [
+        1,
+        1
+      ]
+    },
+    "desbloqueoDia": {
+      "precios": 2,
+      "asignacionDivisas": 5,
+      "metas": 1,
+      "reajusteSalarial": 9,
+      "emision": 3,
+      "shareExportCobre": 7,
+      "zonasPrioritarias": 4,
+      "fiscalizacion": 11,
+      "inversiones": 10,
+      "autonomia": 6
+    },
+    "reajusteMax": 0.4,
+    "reajusteAnimo": 20,
+    "costoPolitico": {
+      "precioPorPunto": 0.8,
+      "RACIONAMIENTO": 8,
+      "ESTRICTO": 15,
+      "CENTRALIZADO": 4
+    },
+    "prioridadBonus": 8,
+    "maxZonasPrioritarias": 3,
+    "inversion": {
+      "costoPorCapacidad": 0.6,
+      "aumento": 0.15,
+      "diasPorSector": {
+        "MIN": 15,
+        "IND": 12,
+        "CON": 8,
+        "AGR": 10,
+        "ENT": 12
+      }
+    }
+  },
+  "cobre": {
+    "refinadoValorInicial": 0.75,
+    "refinadoValorMax": 1.35,
+    "madurezDia": 0.04
+  },
+  "autonomia": {
+    "AUTOGESTION": {
+      "moralDia": 0.4,
+      "prod": 0,
+      "autoritarismoDia": -0.15,
+      "lagDias": 1
+    },
+    "COORDINADO": {
+      "moralDia": 0,
+      "prod": 0,
+      "autoritarismoDia": 0,
+      "lagDias": 0
+    },
+    "CENTRALIZADO": {
+      "moralDia": -0.6,
+      "prod": 0.06,
+      "autoritarismoDia": 0.25,
+      "lagDias": 0
+    }
+  },
+  "observacion": {
+    "ruido": {
+      "1": 0.03,
+      "2": 0.05,
+      "3": 0.07,
+      "CLIMAX": 0.1
+    },
+    "ruidoMercadoNegro": 4,
+    "ruidoInflacion": 0.5,
+    "investigarMin": 30,
+    "investigarDias": 3
+  },
+  "cyberstride": {
+    "alpha": 0.5,
+    "beta": 0.3,
+    "bandaSigmas": 2.5,
+    "bandaMinPct": 0.06,
+    "minPuntos": 4,
+    "tendenciaDias": 3,
+    "tendenciaMinPct": 0.04,
+    "horizonte": 5,
+    "bandaRuidoMult": 2.5
+  },
+  "checo": {
+    "costoHoras": {
+      "7": 1,
+      "30": 3
+    },
+    "errorPct": {
+      "7": 0.05,
+      "30": 0.2
+    },
+    "sesgoParametros": 0.08,
+    "maxRuns": 6
+  },
+  "algedonico": {
+    "venceMin": {
+      "1": 120,
+      "2": 75,
+      "3": 45
+    },
+    "probHora": 0.35,
+    "averiasDia": {
+      "1": 0.8,
+      "2": 1.5,
+      "3": 2.5,
+      "CLIMAX": 3.5
+    },
+    "maxDia": {
+      "1": 2,
+      "2": 4,
+      "3": 5,
+      "CLIMAX": 7
+    },
+    "confianzaExpira": -2,
+    "confianzaResuelve": 0.5,
+    "eficienciaAveria": 0.6,
+    "recuperacionEficienciaDia": 0.15
+  },
+  "politica": {
+    "capitalBase": 0.5,
+    "capitalAbastAlto": 1,
+    "capitalAnimoAlto": 0.5,
+    "capitalAbastBajo": -2,
+    "capitalMax": 100,
+    "umbralAbastAlto": 75,
+    "umbralAnimoAlto": 60,
+    "umbralAbastBajo": 40,
+    "umbralAnimoBajo": 30,
+    "confianzaAbastBajo": -2,
+    "confianzaAnimoBajo": -2,
+    "confianzaBien": 0.3,
+    "autoritarismoFiscalizacion": {
+      "OFF": 0,
+      "RACIONAMIENTO": 0.5,
+      "ESTRICTO": 1.2
+    }
+  },
+  "dificultad": {
+    "HISTORIA": {
+      "ruido": 0.7,
+      "checoError": 0.8
+    },
+    "NORMAL": {
+      "ruido": 1,
+      "checoError": 1
+    },
+    "BEER": {
+      "ruido": 1.2,
+      "checoError": 1.5
+    }
   }
 }

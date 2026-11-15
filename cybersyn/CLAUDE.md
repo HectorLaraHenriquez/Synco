@@ -13,6 +13,19 @@ Juego de gestión económica pausable, jugado desde la Opsroom (Chile 1974–76,
 - **Palancas (3.4):** precios, divisas por sector, metas, salarios, emisión, destino del cobre, distribución, fiscalización, inversión, autonomía. Con retraso realista (H2).
 - **Sabotaje, facciones, tecnología, finales:** ver GDD §3.8, 3.9, 4, 5 (H6+).
 
+## Arquitectura de `src/sim` (sin Phaser ni DOM)
+- `engine.ts`: `createEngine(data)` → `init`, `tick(state, dtHoras)`, `endDay`, `runDay`, `applyCommand`/`tryCommand`, `forceLevers` (sólo tests). Todo puro: clona y devuelve estado nuevo.
+- `advance.ts`: avance mutable (`stepMut`, `endDayMut`) que comparten el engine y Checo.
+- `commands.ts`: única vía de la UI para cambiar el estado. Un comando rechazado devuelve el mismo estado y un código (`SIN_TIEMPO`, `PALANCA_BLOQUEADA`, `SIN_CICLOS`...). Los comandos con costo de reloj avanzan la simulación.
+- `levers.ts`: borrador → EJECUTAR. Retrasos, desbloqueos por día (o flag `unlock.<palanca>`), costo de 10 min por palanca, capital político y divisas. `precios`, `reajusteSalarial` e `inversiones` son de un solo uso.
+- `effects.ts`: intérprete de `Effect` con lista blanca de paths (`validateData` corre al cargar). Los retrasos viven en `pendingEffects` y se aplican al abrir el día.
+- `observe.ts`: `report(state, ctx, nodo, indicador)` aplica ruido (hash determinista por día), retraso y falsificación. **La UI sólo lee números por aquí** (o `reportIndicators`, `visibleSeries`). `state.indicators` y `produccion` son valores REALES.
+- `cyberstride.ts`: Holt + banda de tolerancia + alertas de desvío/tendencia sobre las series reportadas.
+- `checo.ts`: simula sobre datos reportados, sin azar ni eventos ajenos al jugador, con sesgo propio de parámetros. Línea base vs. escenario (borrador).
+- `cyberfolk.ts`: ánimo por zona, moral por sector (según dónde están sus empresas), voces del cierre.
+- `algedonic.ts`: señales por condición o avería al azar; escalan al vencer; atender ocupa un slot.
+- Nodos: `pais`, `sector:CON`, `rama:CON.textil`, `firm:<id>`, `zone:BIO`.
+
 ## Convenciones
 - `src/sim` nunca importa Phaser ni toca el DOM. Funciones puras: clonan y devuelven estado nuevo (`structuredClone`).
 - Toda constante numérica de balance va en `public/data/balance.json`, no en el código. Todo texto visible va en JSON.
@@ -25,6 +38,11 @@ Juego de gestión económica pausable, jugado desde la Opsroom (Chile 1974–76,
 - `npm test` · `npm run typecheck` · `npm run sim -- --policy none|reasonable --seed X --days 30`
 
 ## Estado
-- **H1 (núcleo de simulación): hecho.** Falta H2+ (palancas con retraso, Cyberstride, Checo, Cyberfolk, algedónicas...).
-- Desviación consciente: `factorInsumos` usa flujo + stock por sub-paso (`min(1,(stock+llegada·dt)/consumo·dt)`), no sólo `insumos/requeridoDia`; evita que el stock vacío anule la producción aunque lleguen insumos.
-- El engine se crea con `createEngine(data)` (cierra sobre los datos) en vez de funciones sueltas.
+- **H1 (núcleo) y H2 (palancas, Cyberstride, Checo, Cyberfolk, algedónicas): hechos.** Sigue H3 (esqueleto Phaser).
+- Pendiente de hitos posteriores: télex, Consejo y tecnología (H5); sabotaje, facciones, eventos, red y finales completos (H6). `TELEX_ACTION`, `COUNCIL_CHOICE` y `START_RESEARCH` responden `NO_IMPLEMENTADO`.
+- Desviaciones conscientes del GDD:
+  - `factorInsumos` usa flujo + stock por sub-paso, no sólo `insumos/requeridoDia`.
+  - El engine es una fábrica (`createEngine(data)`), no funciones sueltas.
+  - Se agregó `op: 'mul'` a `Effect` y `CLEAR_DRAFT` a `Command`.
+  - El error de Checo se mide en puntos de la escala 0–100 de cada indicador.
+  - La pasividad termina en DESPIDO o COLAPSO (días 12–30): ignorar algedónicas agota la confianza antes del colapso económico.

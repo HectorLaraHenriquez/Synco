@@ -33,3 +33,24 @@ export class Rng {
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * this.next());
   }
 }
+
+/** Ruido determinista sin estado en [-1,1): estable para (semilla, día, clave). */
+export function hashNoise(seed: string, day: number, key: string): number {
+  return (hashSeed(`${seed}|${day}|${key}`) / 4294967296) * 2 - 1;
+}
+
+/** RNG nulo: Checo proyecta el valor esperado, sin azar. */
+export class ZeroRng extends Rng {
+  constructor() {
+    super(0);
+  }
+  override next(): number {
+    return 0.5;
+  }
+  override signed(): number {
+    return 0;
+  }
+  override normal(): number {
+    return 0;
+  }
+}

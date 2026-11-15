@@ -4,6 +4,7 @@ export interface SimEvents {
   tick: { day: number; hour: number };
   dayEnded: { day: number };
   ending: { id: string; reason: string; day: number };
+  commandRejected: { cmd: string; error: string };
 }
 
 type Handler<T> = (payload: T) => void;

@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { parseGameData } from '../../src/data/schemas';
+import { validateData } from '../../src/sim/effects';
 import { data } from './helpers';
 
-const raw = () => structuredClone({ balance: data.balance, sectors: data.sectors, zones: data.zones, firms: data.firms }) as Parameters<typeof parseGameData>[0] & { firms: any[]; zones: any[]; balance: any };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const raw = (): any => structuredClone(data);
 
 describe('data', () => {
-  it('carga el mundo mínimo: 5 sectores, 8 zonas, 40 empresas', () => {
+  it('carga el mundo mínimo: 5 sectores, 8 zonas, 40 empresas, 18 ramas', () => {
     expect(data.sectors).toHaveLength(5);
     expect(data.zones).toHaveLength(8);
     expect(data.firms).toHaveLength(40);
-  });
-  it('~18 ramas en total', () => {
     expect(data.sectors.reduce((a, s) => a + s.ramas.length, 0)).toBe(18);
   });
   it('rechaza una rama inexistente', () => {
@@ -32,5 +32,15 @@ describe('data', () => {
     const r = raw();
     delete r.balance.economia.b1;
     expect(() => parseGameData(r)).toThrow();
+  });
+  it('rechaza algedónica cuya autoOpcion no existe', () => {
+    const r = raw();
+    r.algedonic[0].autoOpcion = 'nada';
+    expect(() => parseGameData(r)).toThrow(/autoOpcion/);
+  });
+  it('rechaza efectos con path fuera de la lista blanca', () => {
+    const r = raw();
+    r.algedonic[0].alIgnorar = [{ op: 'add', path: 'economy.inventado', value: 1 }];
+    expect(() => validateData(parseGameData(r))).toThrow(/path no permitido/);
   });
 });

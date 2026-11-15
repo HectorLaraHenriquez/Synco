@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Rng, hashSeed } from '../../src/sim/rng';
+import { Rng, ZeroRng, hashNoise, hashSeed } from '../../src/sim/rng';
 
 describe('rng', () => {
   it('es determinista por semilla', () => {
@@ -26,5 +26,14 @@ describe('rng', () => {
     const sd = Math.sqrt(xs.reduce((a, v) => a + (v - m) ** 2, 0) / xs.length);
     expect(Math.abs(m)).toBeLessThan(0.08);
     expect(Math.abs(sd - 1)).toBeLessThan(0.08);
+  });
+  it('hashNoise es estable por (semilla, día, clave) y está en [-1,1)', () => {
+    expect(hashNoise('s', 3, 'k')).toBe(hashNoise('s', 3, 'k'));
+    expect(hashNoise('s', 3, 'k')).not.toBe(hashNoise('s', 4, 'k'));
+    for (let d = 0; d < 200; d++) expect(Math.abs(hashNoise('s', d, 'k'))).toBeLessThanOrEqual(1);
+  });
+  it('ZeroRng no aporta azar', () => {
+    const z = new ZeroRng();
+    expect([z.normal(), z.signed(), z.next()]).toEqual([0, 0, 0.5]);
   });
 });

@@ -3,48 +3,89 @@
     "id": "NG",
     "nombre": "Norte Grande",
     "poblacion": 0.07,
-    "acceso": 0.9
+    "acceso": 0.9,
+    "lugares": [
+      "Iquique",
+      "Antofagasta",
+      "Calama"
+    ]
   },
   {
     "id": "NC",
     "nombre": "Norte Chico",
     "poblacion": 0.05,
-    "acceso": 0.92
+    "acceso": 0.92,
+    "lugares": [
+      "Copiapó",
+      "La Serena",
+      "Ovalle"
+    ]
   },
   {
     "id": "VAL",
     "nombre": "Valparaíso",
     "poblacion": 0.12,
-    "acceso": 1.02
+    "acceso": 1.02,
+    "lugares": [
+      "Valparaíso",
+      "Quillota",
+      "San Antonio"
+    ]
   },
   {
     "id": "STGO",
     "nombre": "Santiago",
     "poblacion": 0.38,
-    "acceso": 1.05
+    "acceso": 1.05,
+    "lugares": [
+      "La Legua",
+      "San Miguel",
+      "Maipú",
+      "Renca"
+    ]
   },
   {
     "id": "OM",
     "nombre": "O'Higgins-Maule",
     "poblacion": 0.11,
-    "acceso": 0.98
+    "acceso": 0.98,
+    "lugares": [
+      "Rancagua",
+      "Talca",
+      "Curicó"
+    ]
   },
   {
     "id": "BIO",
     "nombre": "Biobío",
     "poblacion": 0.14,
-    "acceso": 0.95
+    "acceso": 0.95,
+    "lugares": [
+      "Lota",
+      "Coronel",
+      "Talcahuano",
+      "Chillán"
+    ]
   },
   {
     "id": "ARL",
     "nombre": "Araucanía-Los Lagos",
     "poblacion": 0.1,
-    "acceso": 0.88
+    "acceso": 0.88,
+    "lugares": [
+      "Temuco",
+      "Osorno",
+      "Puerto Montt"
+    ]
   },
   {
     "id": "AUS",
     "nombre": "Austral",
     "poblacion": 0.03,
-    "acceso": 0.8
+    "acceso": 0.8,
+    "lugares": [
+      "Coyhaique",
+      "Punta Arenas"
+    ]
   }
 ]

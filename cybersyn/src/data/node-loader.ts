@@ -1,15 +1,12 @@
 // Sólo para Node (tests y tools). El navegador usa loader.ts.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parseGameData, type GameData } from './schemas';
-
-const read = (dir: string, rel: string): unknown => JSON.parse(readFileSync(join(dir, rel), 'utf8'));
+import { validateData } from '../sim/effects';
+import { DATA_FILES } from './files';
+import { parseGameData, type GameData, type RawGameData } from './schemas';
 
 export function loadGameDataFromDir(dir = join(process.cwd(), 'public', 'data')): GameData {
-  return parseGameData({
-    balance: read(dir, 'balance.json'),
-    sectors: read(dir, 'world/sectors.json'),
-    zones: read(dir, 'world/zones.json'),
-    firms: read(dir, 'world/firms.json'),
-  });
+  const raw = {} as Record<string, unknown>;
+  for (const [k, rel] of Object.entries(DATA_FILES)) raw[k] = JSON.parse(readFileSync(join(dir, rel), 'utf8'));
+  return validateData(parseGameData(raw as unknown as RawGameData));
 }
