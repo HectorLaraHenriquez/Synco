@@ -73,7 +73,7 @@ export function analizar(xs: number[], cfg: StrideCfg, amp = 0): Analisis {
 /** Alertas del día sobre las series vigiladas (se llama en el cierre, tras archivar los datos). */
 export function alertasDelDia(s: GameState, ctx: Ctx): StrideAlert[] {
   const out: StrideAlert[] = [];
-  for (const [node, ind] of watchedSeries(ctx)) {
+  for (const [node, ind] of watchedSeries(ctx, s)) {
     const xs = visibleSeries(s, ctx, node, ind);
     if (xs.length === 0) continue;
     const a = analizar(xs, ctx.bal.cyberstride, report(s, ctx, node, ind).ruidoPct);

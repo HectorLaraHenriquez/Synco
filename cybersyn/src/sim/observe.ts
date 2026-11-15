@@ -76,10 +76,23 @@ function zoneReading(s: GameState, ctx: Ctx, z: ZoneId, ind: 'animo' | 'abasteci
   return { valor: clamp(v, 0, 100), fuente: 'REPORTADO', edadDias: 0, ruidoPct: amp };
 }
 
+export type Pantalla = 'checo' | 'red' | 'cyberfolk';
+export const pantallaDesbloqueada = (s: GameState, ctx: Ctx, p: Pantalla): boolean =>
+  s.flags[`unlock.pantalla.${p}`] === true || s.day >= ctx.bal.pantallas.desbloqueoDia[p];
+
+/** Zonas con medidores Cyberfolk instalados (antes del despliegue nacional sólo hay zonas piloto). */
+export function zonasCyberfolk(s: GameState, ctx: Ctx): readonly ZoneId[] {
+  return pantallaDesbloqueada(s, ctx, 'cyberfolk') ? ZONE_IDS : ctx.bal.pantallas.cyberfolkPiloto;
+}
+
 function ponderado(s: GameState, ctx: Ctx, ind: 'animo' | 'abastecimiento'): Reading {
-  let v = 0;
-  for (const z of ZONE_IDS) v += zoneReading(s, ctx, z, ind).valor * ctx.zone[z].poblacion;
-  return { valor: v, fuente: 'REPORTADO', edadDias: 0, ruidoPct: ruidoAmp(s, ctx) };
+  const zonas = ind === 'animo' ? zonasCyberfolk(s, ctx) : ZONE_IDS;
+  let v = 0, pop = 0;
+  for (const z of zonas) {
+    v += zoneReading(s, ctx, z, ind).valor * ctx.zone[z].poblacion;
+    pop += ctx.zone[z].poblacion;
+  }
+  return { valor: v / pop, fuente: 'REPORTADO', edadDias: 0, ruidoPct: ruidoAmp(s, ctx) };
 }
 
 function inflacionReading(s: GameState, ctx: Ctx): Reading {
@@ -152,13 +165,17 @@ const PAIS_EXTRA = ['inflacion', 'mercadoNegro', 'divisasMUSD', 'cobre', 'salari
 const SECTOR_INDS = ['produccion', 'insumosDias', 'moral'];
 
 /** Series que vigila Cyberstride cada día (las de empresa se analizan a demanda). */
-export function watchedSeries(ctx: Ctx): [node: string, ind: string][] {
+export function watchedSeries(ctx: Ctx, s?: GameState): [node: string, ind: string][] {
+  const conMedidor = s ? zonasCyberfolk(s, ctx) : ZONE_IDS;
   const out: [string, string][] = INDICATOR_KEYS.map((k) => ['pais', k]);
   for (const sec of ctx.data.sectors) {
     for (const ind of SECTOR_INDS) out.push([`sector:${sec.id}`, ind]);
     for (const r of sec.ramas) out.push([`rama:${sec.id}.${r.id}`, 'produccion']);
   }
-  for (const z of ZONE_IDS) out.push([`zone:${z}`, 'animo'], [`zone:${z}`, 'abastecimiento']);
+  for (const z of ZONE_IDS) {
+    if (conMedidor.includes(z)) out.push([`zone:${z}`, 'animo']);
+    out.push([`zone:${z}`, 'abastecimiento']);
+  }
   return out;
 }
 
@@ -174,6 +191,10 @@ export function recordDay(s: GameState, ctx: Ctx): void {
 /** Serie visible de un indicador (las empresas con retraso muestran menos días). */
 export function visibleSeries(s: GameState, ctx: Ctx, node: string, ind: string): number[] {
   const serie = s.series[`${node}.${ind}`] ?? [];
+  if (node.startsWith('zone:') && ind === 'animo' && !ctx.bal.pantallas.cyberfolkPiloto.includes(node.slice(5) as ZoneId)) {
+    // Zona sin medidor hasta el despliegue nacional: no hay historia anterior.
+    return pantallaDesbloqueada(s, ctx, 'cyberfolk') ? serie.slice(ctx.bal.pantallas.desbloqueoDia.cyberfolk - 1) : [];
+  }
   if (node.startsWith('firm:')) {
     const f = s.firms[node.slice(5)];
     if (f && !firmInvestigada(s, f)) {

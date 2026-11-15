@@ -51,7 +51,11 @@ export type Cond = z.infer<typeof CondSchema>;
 
 export const BalanceSchema = z.object({
   version: n,
-  tiempo: z.object({ horasPorDia: n, horaInicio: n, diasCampana: n }),
+  tiempo: z.object({ horasPorDia: n, horaInicio: n, diasCampana: n, segundosPorHora: n }),
+  pantallas: z.object({
+    desbloqueoDia: z.object({ checo: n, red: n, cyberfolk: n }),
+    cyberfolkPiloto: z.array(zoneId),
+  }),
   inicio: z.object({
     divisas: n, precioCobre: n, ipc: n, empleo: n, mercadoNegro: n, deudaExterna: n, moral: n, animo: n,
     brechaInicial: n, utilizacionBase: n, soberaniaCultural: n, stockDiasInsumos: n, capitalPolitico: n,

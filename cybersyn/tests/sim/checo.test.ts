@@ -20,6 +20,9 @@ describe('Checo: comando', () => {
     expect(s.levers).toEqual(s0.levers);
     expect(run(s, { t: 'RUN_CHECO', horizonDays: 30 }).hour).toBe(12);
   });
+  it('Checo llega el día 4', () => {
+    expect(errorOf(atDay(3), { t: 'RUN_CHECO', horizonDays: 7 })).toBe('PANTALLA_BLOQUEADA');
+  });
   it('se agotan los ciclos del día y se reponen al día siguiente', () => {
     let s = atDay(4);
     for (let i = 0; i < 4; i++) s = run(s, { t: 'RUN_CHECO', horizonDays: 7 });
@@ -32,7 +35,7 @@ describe('Checo: comando', () => {
     expect(errorOf(s, { t: 'RUN_CHECO', horizonDays: 30 })).toBe('SIN_TIEMPO');
   });
   it('runCheco y buildChecoState no mutan el estado real', () => {
-    const s = days(engine.init('ck'), 2);
+    const s = days(engine.init('ck'), 3);
     const antes = JSON.stringify(s);
     runCheco(s, ctx, 7);
     buildChecoState(s, ctx);
@@ -104,12 +107,12 @@ describe('Checo: escenarios y límites', () => {
     expect(buildChecoState(s, ctx).pendingEffects).toHaveLength(0);
   });
   it('el cierre registra "Checo dijo / pasó"', () => {
-    let s = run(days(engine.init('dijo'), 2), { t: 'RUN_CHECO', horizonDays: 7 });
+    let s = run(days(engine.init('dijo'), 3), { t: 'RUN_CHECO', horizonDays: 7 });
     s = days(s, 1);
-    expect(s.history[2]!.checo).toBeUndefined();
+    expect(s.history[3]!.checo).toBeUndefined();
     s = days(s, 1);
-    const h = s.history[3]!;
-    expect(h.checo?.hechoElDia).toBe(3);
+    const h = s.history[4]!;
+    expect(h.checo?.hechoElDia).toBe(4);
     expect(Math.abs(h.checo!.dijo.produccion - h.indicators.produccion)).toBeLessThan(10);
   });
   it('sólo se guardan las últimas corridas', () => {

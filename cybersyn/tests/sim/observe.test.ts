@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { investigado, report, reportIndicators, ruidoAmp, visibleSeries } from '../../src/sim/observe';
+import { investigado, report, reportIndicators, ruidoAmp, visibleSeries, zonasCyberfolk } from '../../src/sim/observe';
 import { atDay, ctx, days, engine, errorOf, run } from './helpers';
 
 describe('report(): ruido', () => {
@@ -91,6 +91,15 @@ describe('report(): falsificación, retraso e investigación', () => {
     s.sectors.AGR.autonomia = 'AUTOGESTION';
     expect(report(s, ctx, 'sector:AGR', 'produccion').edadDias).toBe(1);
     expect(report(s, ctx, 'sector:CON', 'produccion').edadDias).toBe(0);
+  });
+  it('antes del día 8 sólo las zonas piloto tienen medidor Cyberfolk', () => {
+    expect(zonasCyberfolk(atDay(3), ctx)).toEqual(ctx.bal.pantallas.cyberfolkPiloto);
+    expect(zonasCyberfolk(atDay(8), ctx)).toHaveLength(8);
+    const s = days(engine.init('obs'), 2);
+    expect(visibleSeries(s, ctx, 'zone:STGO', 'animo')).toHaveLength(2);
+    expect(visibleSeries(s, ctx, 'zone:AUS', 'animo')).toHaveLength(0);
+    expect(visibleSeries(s, ctx, 'zone:AUS', 'abastecimiento')).toHaveLength(2);
+    expect(s.alerts.every((a) => !a.serie.startsWith('zone:AUS.animo'))).toBe(true);
   });
   it('el cierre archiva una entrada por día en cada serie', () => {
     const s = days(engine.init('obs'), 3);

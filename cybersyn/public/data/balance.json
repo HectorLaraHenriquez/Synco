@@ -3,7 +3,8 @@
   "tiempo": {
     "horasPorDia": 12,
     "horaInicio": 8,
-    "diasCampana": 30
+    "diasCampana": 30,
+    "segundosPorHora": 50
   },
   "inicio": {
     "divisas": 200,
@@ -310,5 +311,17 @@
       "ruido": 1.2,
       "checoError": 1.5
     }
+  },
+  "pantallas": {
+    "desbloqueoDia": {
+      "checo": 4,
+      "red": 6,
+      "cyberfolk": 8
+    },
+    "cyberfolkPiloto": [
+      "STGO",
+      "VAL",
+      "BIO"
+    ]
   }
 }

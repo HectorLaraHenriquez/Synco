@@ -5,7 +5,7 @@ import { bus } from './bus';
 import { initSesgo } from './checo';
 import { execCommand, type Command } from './commands';
 import { clamp, makeCtx, type Ctx } from './ctx';
-import { computeIndicators, computeProduction, computeZones, refreshSectorBasics } from './economy';
+import { computeIndicators, computeProduction, refreshSectorBasics, stepEconomy } from './economy';
 import { forceApply } from './levers';
 import { Rng, hashSeed } from './rng';
 import {
@@ -112,7 +112,7 @@ export function createEngine(data: GameData): Engine {
     e.abastecimiento = clamp((100 * e.ofertaBasicos * (1 - ini.mercadoNegro)) / e.demandaBasicos, 0, 100);
     const share = s.levers.shareExportCobre;
     e.ingresosDivisas = s.sectors.MIN.produccion * e.precioCobre * bal.economia.kCobre * (share + (1 - share) * bal.cobre.refinadoValorInicial);
-    computeZones(s, ctx);
+    stepEconomy(s, ctx, 0); // fija inflación y demás derivados sin avanzar el tiempo
     s.indicators = computeIndicators(s, ctx);
     return s;
   }

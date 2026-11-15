@@ -35,10 +35,12 @@ Juego de gestión económica pausable, jugado desde la Opsroom (Chile 1974–76,
 - Los números visibles deben pasar por `report()` (H2); la UI no lee valores reales salvo en nodos investigados.
 
 ## Comandos
-- `npm test` · `npm run typecheck` · `npm run sim -- --policy none|reasonable --seed X --days 30`
+- `npm run dev` · `npm test` · `npm run typecheck` · `npm run sim -- --policy none|reasonable --seed X --days 30`
 
 ## Estado
-- **H1 (núcleo) y H2 (palancas, Cyberstride, Checo, Cyberfolk, algedónicas): hechos.** Sigue H3 (esqueleto Phaser).
+- **H1, H2 y H3 (esqueleto Phaser con placeholders): hechos.** `npm run dev` para jugar; `?speed=N` acelera el reloj.
+- UI: `src/game` (sesión y reloj, sin Phaser), `src/scenes`, `src/ui` (paleta, fuente bitmap 5×7 propia, paneles, consola). Textos en `public/data/ui/es.json`.
+- Prueba de humo en navegador: `npx vite build && npx vite preview --port 4173 &` y luego `node tools/e2e-smoke.cjs`.
 - Pendiente de hitos posteriores: télex, Consejo y tecnología (H5); sabotaje, facciones, eventos, red y finales completos (H6). `TELEX_ACTION`, `COUNCIL_CHOICE` y `START_RESEARCH` responden `NO_IMPLEMENTADO`.
 - Desviaciones conscientes del GDD:
   - `factorInsumos` usa flujo + stock por sub-paso, no sólo `insumos/requeridoDia`.
