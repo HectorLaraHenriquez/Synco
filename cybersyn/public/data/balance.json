@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "tiempo": {
+    "horasPorDia": 12,
+    "horaInicio": 8,
+    "diasCampana": 30
+  },
+  "inicio": {
+    "divisas": 200,
+    "precioCobre": 0.9,
+    "ipc": 1,
+    "empleo": 0.9,
+    "mercadoNegro": 0.05,
+    "deudaExterna": 1500,
+    "moral": 70,
+    "animo": 62,
+    "brechaInicial": 0.12,
+    "utilizacionBase": 0.9,
+    "soberaniaCultural": 30,
+    "stockDiasInsumos": 5,
+    "capitalPolitico": 50,
+    "confianza": 70,
+    "ciclosComputo": 4,
+    "slotsAtencion": 2,
+    "autoritarismo": 20,
+    "hostilidadNorte": 20,
+    "asignacionDivisas": {
+      "MIN": 0.22,
+      "IND": 0.26,
+      "CON": 0.17,
+      "AGR": 0.13,
+      "ENT": 0.22
+    }
+  },
+  "economia": {
+    "shareExportCobre": 0.8,
+    "kCobre": 0.1,
+    "importAlimentosUnidades": 10,
+    "precioImportAlimento": 0.12,
+    "presupuestoInsumosDia": 3.2,
+    "servicioDeudaDia": 1.4,
+    "energiaPeso": 0.5,
+    "a1": 0.5,
+    "a2": 0.2,
+    "a3": 0.05,
+    "controlBase": 0.3,
+    "controlPendiente": 3,
+    "b1": 0.3,
+    "b2": 0.06,
+    "b3": 0.5,
+    "b4": 0.08,
+    "inflacionBase": 0.01,
+    "emisionNivel": {
+      "BAJO": 0.2,
+      "MEDIO": 1,
+      "ALTO": 2
+    },
+    "emisionAnimo": {
+      "BAJO": 0,
+      "MEDIO": 0.15,
+      "ALTO": 0.3
+    },
+    "fiscalizacionNivel": {
+      "OFF": 0,
+      "RACIONAMIENTO": 0.1,
+      "ESTRICTO": 0.25
+    },
+    "fiscalizacionAnimo": {
+      "OFF": 0,
+      "RACIONAMIENTO": -0.2,
+      "ESTRICTO": -0.6
+    },
+    "indexacionSalarial": 1,
+    "ajustePreciosDecay": 0.15,
+    "pesoCategoria": {
+      "BASICOS": 0.6,
+      "MANUFACTURAS": 0.3,
+      "SERVICIOS": 0.1
+    }
+  },
+  "exogeno": {
+    "cobreMedia": 0.9,
+    "cobreReversion": 0.05,
+    "cobreVolatilidad": 0.025,
+    "derivaPrecioImportDia": 0.0015,
+    "depreciacionCapacidadDia": 0.0025,
+    "desgasteMetaCapacidad": 0.01,
+    "desgasteMetaMoral": 10,
+    "moralConvergencia": 0.15
+  },
+  "cyberfolk": {
+    "w1": 1.0,
+    "w2": 4,
+    "w3": 10,
+    "ruido": 1
+  },
+  "escalas": {
+    "divisasMax": 800,
+    "inflacionMax": 0.25,
+    "deudaRef": 3000,
+    "importAlimentosRef": 10
+  },
+  "colapso": {
+    "produccionMin": 20,
+    "produccionDias": 3,
+    "abastecimientoMin": 15,
+    "abastecimientoDias": 2,
+    "divisasDias": 3,
+    "animoMin": 10
+  },
+  "limites": {
+    "metaMin": 0.8,
+    "metaMax": 1.3,
+    "precioMaxCambio": 0.3
+  }
+}

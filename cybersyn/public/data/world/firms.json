@@ -1,0 +1,362 @@
+[
+  {
+    "id": "cob_chuqui",
+    "nombre": "COB-CHUQUI",
+    "sector": "MIN",
+    "rama": "cobre",
+    "zona": "NG",
+    "capacidad": 20,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cob_salvador",
+    "nombre": "COB-SALVADOR",
+    "sector": "MIN",
+    "rama": "cobre",
+    "zona": "NC",
+    "capacidad": 13.33,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cob_andina",
+    "nombre": "COB-ANDINA",
+    "sector": "MIN",
+    "rama": "cobre",
+    "zona": "VAL",
+    "capacidad": 10,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cob_teniente",
+    "nombre": "COB-TENIENTE",
+    "sector": "MIN",
+    "rama": "cobre",
+    "zona": "OM",
+    "capacidad": 13.33,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "sal_pedro",
+    "nombre": "SAL-PEDRO",
+    "sector": "MIN",
+    "rama": "salitre",
+    "zona": "NG",
+    "capacidad": 6.67,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "sal_humberstone",
+    "nombre": "SAL-HUMBERSTONE",
+    "sector": "MIN",
+    "rama": "salitre",
+    "zona": "NG",
+    "capacidad": 6.67,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "car_lota",
+    "nombre": "CAR-LOTA",
+    "sector": "MIN",
+    "rama": "carbon",
+    "zona": "BIO",
+    "capacidad": 10,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ace_huachipato",
+    "nombre": "ACE-HUACHIPATO",
+    "sector": "IND",
+    "rama": "acero",
+    "zona": "BIO",
+    "capacidad": 19.35,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ace_compania",
+    "nombre": "ACE-COMPANIA",
+    "sector": "IND",
+    "rama": "acero",
+    "zona": "NC",
+    "capacidad": 9.68,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cem_melon",
+    "nombre": "CEM-MELON",
+    "sector": "IND",
+    "rama": "cemento",
+    "zona": "VAL",
+    "capacidad": 12.9,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cem_polpaico",
+    "nombre": "CEM-POLPAICO",
+    "sector": "IND",
+    "rama": "cemento",
+    "zona": "STGO",
+    "capacidad": 9.68,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cem_biobio",
+    "nombre": "CEM-BIOBIO",
+    "sector": "IND",
+    "rama": "cemento",
+    "zona": "BIO",
+    "capacidad": 6.45,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "qui_petroq",
+    "nombre": "QUI-PETROQ",
+    "sector": "IND",
+    "rama": "quimica",
+    "zona": "BIO",
+    "capacidad": 9.68,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "qui_soquimich",
+    "nombre": "QUI-SOQUIMICH",
+    "sector": "IND",
+    "rama": "quimica",
+    "zona": "NG",
+    "capacidad": 6.45,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "met_famae",
+    "nombre": "MET-FAMAE",
+    "sector": "IND",
+    "rama": "metalmecanica",
+    "zona": "STGO",
+    "capacidad": 9.68,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "met_madeco",
+    "nombre": "MET-MADECO",
+    "sector": "IND",
+    "rama": "metalmecanica",
+    "zona": "STGO",
+    "capacidad": 9.68,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "met_sumar",
+    "nombre": "MET-SUMAR",
+    "sector": "IND",
+    "rama": "metalmecanica",
+    "zona": "VAL",
+    "capacidad": 6.45,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "tex_yarur",
+    "nombre": "TEX-YARUR",
+    "sector": "CON",
+    "rama": "textil",
+    "zona": "STGO",
+    "capacidad": 14.1,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "tex_sumar",
+    "nombre": "TEX-SUMAR",
+    "sector": "CON",
+    "rama": "textil",
+    "zona": "STGO",
+    "capacidad": 10.59,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "tex_bellavista",
+    "nombre": "TEX-BELLAVISTA",
+    "sector": "CON",
+    "rama": "textil",
+    "zona": "BIO",
+    "capacidad": 10.59,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "tex_concepcion",
+    "nombre": "TEX-CONCEPCION",
+    "sector": "CON",
+    "rama": "textil",
+    "zona": "BIO",
+    "capacidad": 7.06,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ali_iansa",
+    "nombre": "ALI-IANSA",
+    "sector": "CON",
+    "rama": "alimentos",
+    "zona": "OM",
+    "capacidad": 14.12,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ali_carozzi",
+    "nombre": "ALI-CAROZZI",
+    "sector": "CON",
+    "rama": "alimentos",
+    "zona": "STGO",
+    "capacidad": 14.12,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ali_lota",
+    "nombre": "ALI-LOTA",
+    "sector": "CON",
+    "rama": "alimentos",
+    "zona": "BIO",
+    "capacidad": 7.06,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ali_panes",
+    "nombre": "ALI-PANES",
+    "sector": "CON",
+    "rama": "alimentos",
+    "zona": "STGO",
+    "capacidad": 10.59,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cal_bata",
+    "nombre": "CAL-BATA",
+    "sector": "CON",
+    "rama": "calzado",
+    "zona": "STGO",
+    "capacidad": 10.59,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "cal_lota",
+    "nombre": "CAL-LOTA",
+    "sector": "CON",
+    "rama": "calzado",
+    "zona": "BIO",
+    "capacidad": 7.06,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "mue_osorno",
+    "nombre": "MUE-OSORNO",
+    "sector": "CON",
+    "rama": "muebles",
+    "zona": "ARL",
+    "capacidad": 7.06,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "mue_stgo",
+    "nombre": "MUE-STGO",
+    "sector": "CON",
+    "rama": "muebles",
+    "zona": "STGO",
+    "capacidad": 7.06,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_cauquenes",
+    "nombre": "AGR-CAUQUENES",
+    "sector": "AGR",
+    "rama": "cereales",
+    "zona": "OM",
+    "capacidad": 18.95,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_arauco",
+    "nombre": "AGR-ARAUCO",
+    "sector": "AGR",
+    "rama": "cereales",
+    "zona": "ARL",
+    "capacidad": 18.95,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_aconcagua",
+    "nombre": "AGR-ACONCAGUA",
+    "sector": "AGR",
+    "rama": "frutas",
+    "zona": "VAL",
+    "capacidad": 18.95,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_elqui",
+    "nombre": "AGR-ELQUI",
+    "sector": "AGR",
+    "rama": "frutas",
+    "zona": "NC",
+    "capacidad": 9.47,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_magallanes",
+    "nombre": "AGR-MAGALLANES",
+    "sector": "AGR",
+    "rama": "ganaderia",
+    "zona": "AUS",
+    "capacidad": 9.47,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "agr_forestal_sur",
+    "nombre": "AGR-FORESTAL-SUR",
+    "sector": "AGR",
+    "rama": "forestal",
+    "zona": "ARL",
+    "capacidad": 14.21,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ent_endesa",
+    "nombre": "ENT-ENDESA",
+    "sector": "ENT",
+    "rama": "electricidad",
+    "zona": "STGO",
+    "capacidad": 15.8,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ent_colbun",
+    "nombre": "ENT-COLBUN",
+    "sector": "ENT",
+    "rama": "electricidad",
+    "zona": "OM",
+    "capacidad": 9.47,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ent_enap",
+    "nombre": "ENT-ENAP",
+    "sector": "ENT",
+    "rama": "combustibles",
+    "zona": "BIO",
+    "capacidad": 15.79,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ent_ffcc",
+    "nombre": "ENT-FFCC",
+    "sector": "ENT",
+    "rama": "transporte",
+    "zona": "STGO",
+    "capacidad": 9.47,
+    "autonomia": "COORDINADO"
+  },
+  {
+    "id": "ent_camiones",
+    "nombre": "ENT-CAMIONES",
+    "sector": "ENT",
+    "rama": "transporte",
+    "zona": "VAL",
+    "capacidad": 9.47,
+    "autonomia": "COORDINADO"
+  }
+]

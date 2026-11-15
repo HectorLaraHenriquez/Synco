@@ -1,0 +1,25 @@
+{
+  "name": "cybersyn",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cybersyn: Sala de Operaciones",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "sim": "tsx tools/sim-cli.ts"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

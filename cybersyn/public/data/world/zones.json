@@ -1,0 +1,50 @@
+[
+  {
+    "id": "NG",
+    "nombre": "Norte Grande",
+    "poblacion": 0.07,
+    "acceso": 0.9
+  },
+  {
+    "id": "NC",
+    "nombre": "Norte Chico",
+    "poblacion": 0.05,
+    "acceso": 0.92
+  },
+  {
+    "id": "VAL",
+    "nombre": "Valparaíso",
+    "poblacion": 0.12,
+    "acceso": 1.02
+  },
+  {
+    "id": "STGO",
+    "nombre": "Santiago",
+    "poblacion": 0.38,
+    "acceso": 1.05
+  },
+  {
+    "id": "OM",
+    "nombre": "O'Higgins-Maule",
+    "poblacion": 0.11,
+    "acceso": 0.98
+  },
+  {
+    "id": "BIO",
+    "nombre": "Biobío",
+    "poblacion": 0.14,
+    "acceso": 0.95
+  },
+  {
+    "id": "ARL",
+    "nombre": "Araucanía-Los Lagos",
+    "poblacion": 0.1,
+    "acceso": 0.88
+  },
+  {
+    "id": "AUS",
+    "nombre": "Austral",
+    "poblacion": 0.03,
+    "acceso": 0.8
+  }
+]

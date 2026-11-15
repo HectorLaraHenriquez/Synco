@@ -1,0 +1,119 @@
+[
+  {
+    "id": "MIN",
+    "nombre": "Minería",
+    "insumoPorUnidad": 0.1,
+    "precioImport": 0.085,
+    "moralInicial": 70,
+    "ramas": [
+      {
+        "id": "cobre",
+        "nombre": "Cobre"
+      },
+      {
+        "id": "salitre",
+        "nombre": "Salitre"
+      },
+      {
+        "id": "carbon",
+        "nombre": "Carbón"
+      }
+    ]
+  },
+  {
+    "id": "IND",
+    "nombre": "Industria básica",
+    "insumoPorUnidad": 0.09,
+    "precioImport": 0.1,
+    "moralInicial": 68,
+    "ramas": [
+      {
+        "id": "acero",
+        "nombre": "Acero"
+      },
+      {
+        "id": "cemento",
+        "nombre": "Cemento"
+      },
+      {
+        "id": "quimica",
+        "nombre": "Química"
+      },
+      {
+        "id": "metalmecanica",
+        "nombre": "Metalmecánica"
+      }
+    ]
+  },
+  {
+    "id": "CON",
+    "nombre": "Consumo",
+    "insumoPorUnidad": 0.065,
+    "precioImport": 0.075,
+    "moralInicial": 70,
+    "ramas": [
+      {
+        "id": "textil",
+        "nombre": "Textil"
+      },
+      {
+        "id": "alimentos",
+        "nombre": "Alimentos"
+      },
+      {
+        "id": "calzado",
+        "nombre": "Calzado"
+      },
+      {
+        "id": "muebles",
+        "nombre": "Muebles"
+      }
+    ]
+  },
+  {
+    "id": "AGR",
+    "nombre": "Agro",
+    "insumoPorUnidad": 0.045,
+    "precioImport": 0.065,
+    "moralInicial": 72,
+    "ramas": [
+      {
+        "id": "cereales",
+        "nombre": "Cereales"
+      },
+      {
+        "id": "frutas",
+        "nombre": "Frutas"
+      },
+      {
+        "id": "ganaderia",
+        "nombre": "Ganadería"
+      },
+      {
+        "id": "forestal",
+        "nombre": "Forestal"
+      }
+    ]
+  },
+  {
+    "id": "ENT",
+    "nombre": "Energía y transporte",
+    "insumoPorUnidad": 0.18,
+    "precioImport": 0.1,
+    "moralInicial": 68,
+    "ramas": [
+      {
+        "id": "electricidad",
+        "nombre": "Electricidad"
+      },
+      {
+        "id": "combustibles",
+        "nombre": "Combustibles"
+      },
+      {
+        "id": "transporte",
+        "nombre": "Transporte"
+      }
+    ]
+  }
+]
