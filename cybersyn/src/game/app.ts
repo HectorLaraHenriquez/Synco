@@ -3,8 +3,12 @@ import type { GameData } from '../data/schemas';
 import { createEngine, type Engine } from '../sim/engine';
 import { Session, type DayClose } from './session';
 
+/** Resolución lógica de las pantallas heredadas en pixel art (se ven con zoom ×3). */
 export const W = 480;
 export const H = 270;
+/** Resolución real del juego: gráfica vectorial tipo diapositiva. */
+export const VW = 1440;
+export const VH = 810;
 
 export const app: { data?: GameData; engine?: Engine; session?: Session; lastClose?: DayClose; speed: number } = { speed: 1 };
 

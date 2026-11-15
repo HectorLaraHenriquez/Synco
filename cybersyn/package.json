@@ -12,6 +12,8 @@
     "sim": "tsx tools/sim-cli.ts"
   },
   "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/jost": "^5.3.0",
     "phaser": "^3.90.0",
     "zod": "^4.6.7"
   },

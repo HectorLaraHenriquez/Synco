@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { H, W, newGame } from '../game/app';
 import { t } from '../ui/i18n';
 import { PAL } from '../ui/palette';
-import { txt, textW } from '../ui/text';
+import { legacyCamera, txt, textW } from '../ui/text';
 import { Button } from '../ui/widgets/Button';
 
 export class MenuScene extends Phaser.Scene {
@@ -11,6 +11,7 @@ export class MenuScene extends Phaser.Scene {
   }
   create(): void {
     this.cameras.main.setBackgroundColor(PAL.negro);
+    legacyCamera(this);
     // Opsroom en penumbra: hexágono y sillas como bloques geométricos.
     const g = this.add.graphics();
     g.fillStyle(PAL.carbon);
@@ -27,7 +28,7 @@ export class MenuScene extends Phaser.Scene {
 
     const start = (): void => {
       newGame();
-      this.scene.start('Opsroom');
+      this.scene.start('Sala');
     };
     new Button(this, W / 2 - 60, 200, t('menu.nueva'), start, { w: 120, h: 15, bg: PAL.naranjo, fg: PAL.negro });
     const pie = t('menu.pie');

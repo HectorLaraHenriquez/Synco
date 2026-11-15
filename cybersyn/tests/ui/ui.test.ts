@@ -54,6 +54,9 @@ describe('textos en JSON', () => {
       ...['precios', 'metas', 'asignacionDivisas', 'emision', 'fiscalizacion', 'shareExportCobre', 'reajusteSalarial', 'zonasPrioritarias', 'inversiones'].map((k) => `palanca.${k}`),
       ...['BAJO', 'MEDIO', 'ALTO', 'OFF', 'RACIONAMIENTO', 'ESTRICTO'].map((k) => `valor.${k}`),
       ...['BASICOS', 'MANUFACTURAS', 'SERVICIOS'].map((k) => `precio.${k}`),
+      ...['produccion', 'abastecimiento', 'estabilidadPrecios', 'divisas', 'estabilidadRed', 'animo', 'soberania'].map((k) => `ind.franja.${k}`),
+      ...['MIN', 'IND', 'CON', 'AGR', 'ENT'].map((k) => `sector.corto.${k}`),
+      ...['produccion', 'insumos', 'moral', 'datos', 'senal'].map((k) => `sala.simbolo.${k}`),
       'alerta.DESVIO', 'alerta.TENDENCIA', 'fin.DESPIDO', 'fin.COLAPSO', 'ind.insumosDias', 'ind.moral',
     ];
     for (const k of req) expect(strings[k], k).toBeDefined();
@@ -118,5 +121,20 @@ describe('sesión (reloj en tiempo real)', () => {
     expect(ses.lastError?.code).toBe('SIN_CAMBIOS');
     expect(ses.dispatch({ t: 'SET_DRAFT_LEVER', lever: 'metas', value: { MIN: 1.1 } })).toBeUndefined();
     expect(ses.lastError).toBeUndefined();
+  });
+});
+
+describe('tablero de símbolos', () => {
+  it('en calma todo apagado; un sector sin insumos y con señal sin atender se enciende', async () => {
+    const { estadoSector, peor } = await import('../../src/ui/status');
+    const s = structuredClone(engine.tick(engine.init('tab')));
+    expect(peor(estadoSector(s, engine.ctx, 'CON'))).toBe(0);
+    s.sectors.ENT.insumos = 0.5 * s.sectors.ENT.requeridoDia;
+    s.sectors.ENT.moral = 45;
+    expect(estadoSector(s, engine.ctx, 'ENT')).toMatchObject({ insumos: 2, moral: 1, senal: 0 });
+    s.algedonic.push({ id: 'x', templateId: 'alg_averia_firma', origen: { tipo: 'FIRM', id: 'ent_endesa' }, nivel: 1, causa: '', creadaDia: 1, venceEnMin: 10, atendida: false, opciones: [], alIgnorar: [] });
+    expect(estadoSector(s, engine.ctx, 'ENT').senal).toBe(2);
+    s.algedonic[0]!.atendida = true;
+    expect(estadoSector(s, engine.ctx, 'ENT').senal).toBe(1);
   });
 });

@@ -30,6 +30,10 @@ await page.goto(url);
 await page.waitForFunction(() => window.__cybersyn?.game.scene.isActive('Menu'));
 await shot('01-menu');
 await page.keyboard.press('Enter');
+await page.waitForFunction(() => window.__cybersyn.game.scene.isActive('Sala'));
+await page.waitForTimeout(300);
+await shot('01b-sala');
+await page.keyboard.press('1'); // de la sala al panel de detalle
 await page.waitForFunction(() => window.__cybersyn.game.scene.isActive('Opsroom'));
 await page.keyboard.press('Space'); // pausa para inspeccionar
 await page.waitForTimeout(200);
@@ -58,8 +62,9 @@ await shot('06-cierre');
 st = await state();
 assert(st.day === 2 && st.hist === 1 && st.metas.MIN === 1.05, `cierre incorrecto: ${JSON.stringify(st)}`);
 await page.keyboard.press('Enter');
-await page.waitForFunction(() => window.__cybersyn.game.scene.isActive('Opsroom'));
+await page.waitForFunction(() => window.__cybersyn.game.scene.isActive('Sala'));
 await page.keyboard.press('2');
+await page.waitForFunction(() => window.__cybersyn.game.scene.isActive('Opsroom'));
 await page.waitForTimeout(400);
 await page.keyboard.press('Space');
 await page.waitForTimeout(100);

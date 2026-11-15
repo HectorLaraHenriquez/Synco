@@ -14,7 +14,7 @@ import { CyberstridePanel } from '../ui/panels/CyberstridePanel';
 import { DatafeedPanel } from '../ui/panels/DatafeedPanel';
 import { NetworkPanel } from '../ui/panels/NetworkPanel';
 import { PANEL_H, PANEL_W, fmt, type Panel } from '../ui/panels/Panel';
-import { txt } from '../ui/text';
+import { legacyCamera, txt } from '../ui/text';
 import { bar } from '../ui/widgets/Bar';
 import { Button } from '../ui/widgets/Button';
 
@@ -41,10 +41,14 @@ export class OpsroomScene extends Phaser.Scene {
     super('Opsroom');
   }
 
+  init(data: { panel?: number }): void {
+    this.active = data.panel ?? 0;
+  }
+
   create(): void {
     this.ses = session();
-    this.active = 0;
     this.cameras.main.setBackgroundColor(PAL.negro);
+    legacyCamera(this);
 
     // Sala: pared de madera y paneles vecinos en escorzo.
     this.add.rectangle(0, STRIP_H, W, VIEW_H, PAL.cafe).setOrigin(0);
@@ -66,7 +70,7 @@ export class OpsroomScene extends Phaser.Scene {
     ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => kb.on(`keydown-${k}`, () => this.show(i)));
     kb.on('keydown-SPACE', () => this.ses.togglePause());
     kb.on('keydown-ENTER', () => this.ses.dispatch({ t: 'EXECUTE_LEVERS' }));
-    kb.on('keydown-ESC', () => this.scene.start('Menu'));
+    kb.on('keydown-ESC', () => this.scene.start('Sala'));
 
     this.unsubscribe = this.ses.onChange(() => { this.dirty = true; });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.unsubscribe?.());

@@ -80,15 +80,15 @@ export class LeverConsole extends Phaser.GameObjects.Container {
       this.add(new Button(this.scene, lx, y3, t(`valor.${v}`), () => this.setDraft(lever, opciones[(opciones.indexOf(v) + 1) % opciones.length]), { w: 40, h: 9, bg: v !== actual ? PAL.naranjo : PAL.carbon }));
     };
     ciclo(0, 'emision', EMISION, s.levers.emision, d.emision);
-    ciclo(94, 'fiscalizacion', FISC, s.levers.fiscalizacion, d.fiscalizacion);
+    ciclo(92, 'fiscalizacion', FISC, s.levers.fiscalizacion, d.fiscalizacion);
     const paso = (x: number, lever: 'shareExportCobre' | 'reajusteSalarial', step: number): void => {
       const ok = isUnlocked(s, ctx, lever);
       const v = d[lever] ?? s.levers[lever];
       if (!ok) { this.add(txt(this.scene, x, y3 + 1, `${t(`palanca.${lever}`)} ${t('palanca.bloqueadaCorta', { dia: ctx.bal.palancas.desbloqueoDia[lever] })}`, PAL.gris)); return; }
       this.stepper(x, y3, t(`palanca.${lever}`), `${fmt(v * 100)}%`.padStart(4), v !== s.levers[lever], (dir) => this.setDraft(lever, Math.round((v + dir * step) * 100) / 100));
     };
-    paso(186, 'shareExportCobre', 0.1);
-    paso(256, 'reajusteSalarial', 0.05);
+    paso(184, 'shareExportCobre', 0.1);
+    paso(255, 'reajusteSalarial', 0.05);
 
     // Fila 4: estado del borrador, error o palancas en camino.
     const cost = executeCost(s, ctx);

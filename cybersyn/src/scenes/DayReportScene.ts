@@ -5,7 +5,7 @@ import { wrap } from '../ui/glyphs';
 import { t } from '../ui/i18n';
 import { PAL } from '../ui/palette';
 import { fmt } from '../ui/panels/Panel';
-import { txt } from '../ui/text';
+import { legacyCamera, txt } from '../ui/text';
 import { bar } from '../ui/widgets/Bar';
 import { Button } from '../ui/widgets/Button';
 
@@ -18,6 +18,7 @@ export class DayReportScene extends Phaser.Scene {
     const ses = session();
     const { antes, snap } = app.lastClose!;
     this.cameras.main.setBackgroundColor(PAL.carbon);
+    legacyCamera(this);
     this.add.rectangle(20, 6, W - 40, 258, PAL.crema).setOrigin(0).setStrokeStyle(1, PAL.negro);
     this.add.rectangle(20, 6, W - 40, 4, PAL.naranjo).setOrigin(0);
     const X = 30;
@@ -52,7 +53,7 @@ export class DayReportScene extends Phaser.Scene {
     const terminado = ses.over;
     if (fin) txt(this, X, 232, t(`fin.${fin.id}`), PAL.rojo);
     else if (terminado) txt(this, X, 232, t('fin.CAMPANA'), PAL.verde_osc);
-    const next = (): void => { this.scene.start(terminado ? 'Menu' : 'Opsroom'); };
+    const next = (): void => { this.scene.start(terminado ? 'Menu' : 'Sala'); };
     new Button(this, W - 150, 244, t(terminado ? 'cierre.menu' : 'cierre.continuar'), next, { w: 120, h: 14, bg: PAL.naranjo, fg: PAL.negro });
     this.input.keyboard?.once('keydown-ENTER', next);
   }

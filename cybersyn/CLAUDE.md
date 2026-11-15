@@ -34,6 +34,13 @@ Juego de gestión económica pausable, jugado desde la Opsroom (Chile 1974–76,
 - Cada módulo de `sim` tiene su test en `tests/sim`. Commits pequeños por hito; no avanzar de hito sin tests verdes.
 - Los números visibles deben pasar por `report()` (H2); la UI no lee valores reales salvo en nodos investigados.
 
+## Dirección visual (decisión del autor, posterior al GDD)
+- No es obligatorio el pixel art: la referencia son las **diapositivas retroiluminadas de la Opsroom real** (Bauhaus, años 70, retrofuturismo). Formas planas, símbolos (○ □ ▽ △ ⬠), diagramas de flujo tipo sistema nervioso. Debe ser intuitivo, no un muro de tablas.
+- El juego corre a 1440×810 vectorial (`src/ui/vector.ts`, fuentes Jost y Barlow Condensed). Paleta de 12 colores intacta.
+- `SalaScene` es la vista principal: la sala dibujada, con pantallas vivas (VSM, ventana al país, tablero de símbolos, monitores). Cada pantalla abre su panel de detalle.
+- Los paneles de detalle, la consola, el menú y el cierre siguen en pixel art 480×270 (cámara ×3): **pendiente migrarlos al estilo nuevo** si el autor lo confirma.
+- Un tablero en calma muestra sólo contornos; lo que se enciende pide atención.
+
 ## Comandos
 - `npm run dev` · `npm test` · `npm run typecheck` · `npm run sim -- --policy none|reasonable --seed X --days 30`
 

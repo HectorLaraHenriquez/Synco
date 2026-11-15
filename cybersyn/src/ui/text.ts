@@ -20,6 +20,7 @@ export function buildFont(scene: Phaser.Scene): void {
     });
   });
   tex.refresh();
+  tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
   const cfg = {
     image: 'fontTex', width: CELL_W, height: CELL_H, chars: CHARS, charsPerRow: PER_ROW,
     'offset.x': 0, 'offset.y': 0, 'spacing.x': 0, 'spacing.y': 0, lineSpacing: 1,
@@ -33,6 +34,11 @@ export function txt(scene: Phaser.Scene, x: number, y: number, s: string, color:
   o.setTint(color);
   if (scale !== 1) o.setScale(scale);
   return o;
+}
+
+/** Las escenas en pixel art se dibujan a 480×270 y la cámara las amplía ×3. */
+export function legacyCamera(scene: Phaser.Scene): void {
+  scene.cameras.main.setOrigin(0, 0).setZoom(3);
 }
 
 export const textW = (s: string, scale = 1): number => s.length * CELL_W * scale;
