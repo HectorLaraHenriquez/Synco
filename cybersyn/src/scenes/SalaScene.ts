@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
+import { SECTOR_IDS, ZONE_IDS } from '../data/schemas';
 import { app, session, VH, VW } from '../game/app';
 import type { Session } from '../game/session';
 import { reportIndicators } from '../sim/observe';
-import { INDICATOR_KEYS } from '../sim/state';
+import { INDICATOR_KEYS, type NationalIndicators } from '../sim/state';
+import { dibujarFicha, FH, FW, tituloFicha, type FichaId } from '../ui/fichas';
 import { t } from '../ui/i18n';
 import { hora } from '../ui/labels';
 import { PAL, semaforo } from '../ui/palette';
@@ -10,12 +12,14 @@ import { Monitors } from '../ui/sala/Monitors';
 import { PaisView } from '../ui/sala/PaisView';
 import { SymbolBoard } from '../ui/sala/SymbolBoard';
 import { VsmDiagram } from '../ui/sala/VsmDiagram';
-import { FONT_TITULO, SIMBOLOS, monitor, pantalla, simbolo, vtext } from '../ui/vector';
+import { FONT_TITULO, SIMBOLOS, hex, monitor, pantalla, simbolo, vbutton, vtext } from '../ui/vector';
 
 const TECHO = 64, PARED = 96, PISO = 640;
 const PARPADEO_MS = 450;
+const ERROR_MS = 4000;
+const FX = (VW - FW) / 2, FY = 132;
 
-/** La sala: vista principal. Las pantallas de la pared están vivas y cada una abre su panel de detalle. */
+/** La sala: vista principal. Las pantallas de la pared están vivas y cada elemento abre su ficha. */
 export class SalaScene extends Phaser.Scene {
   private ses!: Session;
   private dirty = true;
@@ -25,22 +29,36 @@ export class SalaScene extends Phaser.Scene {
   private valores: Phaser.GameObjects.Text[] = [];
   private reloj!: Phaser.GameObjects.Text;
   private pausa!: Phaser.GameObjects.Text;
+  private aviso!: Phaser.GameObjects.Text;
+  private borrador!: Phaser.GameObjects.Text;
   private pais!: PaisView;
   private vsm!: VsmDiagram;
   private tablero!: SymbolBoard;
   private monitores!: Monitors;
+  private ficha?: FichaId;
+  private capa!: Phaser.GameObjects.Container;
+  private contenido!: Phaser.GameObjects.Container;
+  private tituloFicha!: Phaser.GameObjects.Text;
+  private ui: { checoInd: keyof NationalIndicators } = { checoInd: 'abastecimiento' };
 
   constructor() {
     super('Sala');
   }
 
-  private abrir(panel: number): void {
-    this.scene.start('Opsroom', { panel });
+  private abrir(f: FichaId | undefined): void {
+    this.ficha = f;
+    this.dirty = true;
+  }
+
+  /** Zona sensible invisible sobre una pantalla. */
+  private zona(x: number, y: number, w: number, h: number, onClick: () => void): void {
+    this.add.zone(x, y, w, h).setOrigin(0).setInteractive({ useHandCursor: true }).on('pointerdown', onClick);
   }
 
   create(): void {
     this.ses = session();
     this.valores = [];
+    this.ficha = undefined;
     this.cameras.main.setBackgroundColor(PAL.negro);
     const g = this.add.graphics();
 
@@ -60,15 +78,21 @@ export class SalaScene extends Phaser.Scene {
     g.fillRect(0, PARED, 420, PISO - PARED);
     g.fillRect(1020, PARED, 420, PISO - PARED);
 
-    // Pantallas de pared.
-    const pVsm = pantalla(this, 60, 130, 330, 480, t('sala.vsm.titulo'), () => this.abrir(0));
+    // Pantallas de pared y sus zonas sensibles.
+    const pVsm = pantalla(this, 60, 130, 330, 480, t('sala.vsm.titulo'));
     this.vsm = new VsmDiagram(this, pVsm, this.ses);
-    const pPais = pantalla(this, 430, 130, 580, 290, t('sala.pais.titulo'), () => this.abrir(5));
+    SECTOR_IDS.forEach((id, i) => this.zona(60, 130 + 205 - 29 + i * 58, 330, 58, () => this.abrir({ tipo: 'sector', id })));
+    const pPais = pantalla(this, 430, 130, 580, 290, t('sala.pais.titulo'));
     this.pais = new PaisView(this, pPais, this.ses, 580, 290);
-    const pTab = pantalla(this, 1050, 130, 330, 480, '', () => this.abrir(4));
+    const cw = 560 / ZONE_IDS.length;
+    ZONE_IDS.forEach((id, i) => this.zona(440 + i * cw, 160, cw, 240, () => this.abrir({ tipo: 'zona', id })));
+    const pTab = pantalla(this, 1050, 130, 330, 480, '');
     this.tablero = new SymbolBoard(this, pTab, this.ses, 330);
+    SECTOR_IDS.forEach((id, i) => this.zona(1050, 130 + 92 + i * 36, 330, 36, () => this.abrir({ tipo: 'sector', id })));
+    ZONE_IDS.forEach((id, i) => this.zona(1050 + 50 + (i % 4) * 78 - 36, 130 + 318 + 38 + Math.floor(i / 4) * 72 - 34, 72, 62, () => this.abrir({ tipo: 'zona', id })));
     const mw = 168, mh = 130;
-    const mons = [0, 1, 2].map((i) => monitor(this, 444 + i * 196, 462, mw, mh, () => this.abrir(i + 1))) as [Phaser.GameObjects.Container, Phaser.GameObjects.Container, Phaser.GameObjects.Container];
+    const fichas: FichaId[] = [{ tipo: 'stride' }, { tipo: 'checo' }, { tipo: 'algedonico' }];
+    const mons = fichas.map((f, i) => monitor(this, 444 + i * 196, 462, mw, mh, () => this.abrir(f))) as [Phaser.GameObjects.Container, Phaser.GameObjects.Container, Phaser.GameObjects.Container];
     this.monitores = new Monitors(this, mons, this.ses, mw, mh);
 
     // Sillas de fibra de vidrio y consola del apoyabrazos.
@@ -84,13 +108,13 @@ export class SalaScene extends Phaser.Scene {
     silla(170);
     silla(1270);
     g.fillStyle(PAL.blanco);
-    g.fillRoundedRect(470, 690, 500, 140, 40);
+    g.fillRoundedRect(420, 664, 600, 170, 40);
     g.fillStyle(PAL.cafe);
-    g.fillRoundedRect(490, 706, 460, 120, 26);
-    const boton = this.add.rectangle(720, 742, 400, 44, PAL.naranjo).setStrokeStyle(3, PAL.negro).setInteractive({ useHandCursor: true });
-    boton.on('pointerdown', () => this.abrir(0));
-    vtext(this, 720, 742, t('sala.consola'), 22, { color: PAL.negro, bold: true, font: FONT_TITULO, origin: [0.5, 0.5], spacing: 2 });
-    vtext(this, 720, 786, t('sala.ayuda'), 14, { color: PAL.crema, origin: [0.5, 0.5] });
+    g.fillRoundedRect(440, 680, 560, 150, 26);
+    vbutton(this, 460, 696, 330, 50, t('sala.consola'), () => this.abrir({ tipo: 'consola' }), { bg: PAL.naranjo, fg: PAL.negro, size: 22, font: FONT_TITULO });
+    vbutton(this, 804, 696, 176, 50, t('sala.ciudad'), () => this.scene.start('City', { visita: true }), { size: 17 });
+    this.borrador = vtext(this, 720, 766, '', 15, { color: PAL.crema, origin: [0.5, 0.5] });
+    vtext(this, 720, 792, t('sala.ayuda'), 13, { color: PAL.crema, origin: [0.5, 0.5] });
 
     // Franja superior: los siete indicadores con su símbolo.
     this.franja = this.add.graphics();
@@ -102,14 +126,31 @@ export class SalaScene extends Phaser.Scene {
     this.reloj = vtext(this, VW - 20, 6, '', 26, { bold: true, font: FONT_TITULO, origin: [1, 0] });
     this.pausa = vtext(this, VW - 20, 38, '', 16, { color: PAL.naranjo, origin: [1, 0], spacing: 2 });
 
+    // Capa de ficha (oculta hasta que se abre una).
+    this.capa = this.add.container(0, 0).setVisible(false);
+    const velo = this.add.rectangle(0, TECHO, VW, VH - TECHO, PAL.negro, 0.7).setOrigin(0).setInteractive();
+    velo.on('pointerdown', () => this.abrir(undefined));
+    const marco = this.add.rectangle(FX - 12, FY - 52, FW + 24, FH + 64, PAL.carbon).setOrigin(0).setStrokeStyle(3, PAL.naranjo).setInteractive();
+    const vidrio = this.add.rectangle(FX, FY, FW, FH, PAL.negro).setOrigin(0);
+    this.tituloFicha = vtext(this, FX + 8, FY - 42, '', 24, { bold: true, font: FONT_TITULO, spacing: 2 });
+    this.contenido = this.add.container(FX, FY);
+    this.capa.add([velo, marco, vidrio, this.tituloFicha, vbutton(this, FX + FW - 120, FY - 44, 120, 32, t('ficha.cerrar'), () => this.abrir(undefined), { size: 15 }), this.contenido]);
+    this.aviso = vtext(this, VW / 2, FY + FH + 26, '', 18, { color: PAL.blanco, origin: [0.5, 0.5], bold: true }).setBackgroundColor(hex(PAL.rojo)).setPadding(10, 4).setVisible(false);
+
     const kb = this.input.keyboard!;
-    ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'].forEach((k, i) => kb.on(`keydown-${k}`, () => this.abrir(i)));
+    const teclas: [string, FichaId][] = [['ONE', { tipo: 'consola' }], ['TWO', { tipo: 'stride' }], ['THREE', { tipo: 'checo' }], ['FOUR', { tipo: 'algedonico' }]];
+    teclas.forEach(([k, f]) => kb.on(`keydown-${k}`, () => this.abrir(f)));
     kb.on('keydown-SPACE', () => this.ses.togglePause());
-    kb.on('keydown-ENTER', () => this.abrir(0));
-    kb.on('keydown-ESC', () => this.scene.start('Menu'));
+    kb.on('keydown-ENTER', () => (this.ficha?.tipo === 'consola' ? void this.ses.dispatch({ t: 'EXECUTE_LEVERS' }) : this.abrir({ tipo: 'consola' })));
+    kb.on('keydown-ESC', () => (this.ficha ? this.abrir(undefined) : this.scene.start('Menu')));
     const off = this.ses.onChange(() => { this.dirty = true; });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
     this.dirty = true;
+  }
+
+  private refrescarTableros(): void {
+    this.tablero.refresh(this.parpadeo);
+    this.monitores.refresh(this.parpadeo);
   }
 
   private refrescar(): void {
@@ -120,7 +161,7 @@ export class SalaScene extends Phaser.Scene {
     INDICATOR_KEYS.forEach((k, i) => {
       const x = 16 + i * 168, v = ind[k].valor, color = semaforo(v);
       simbolo(g, SIMBOLOS[i % SIMBOLOS.length]!, x + 13, 22, 10, color, true);
-      this.valores[i]!.setText(String(Math.round(v))).setColor('#' + color.toString(16).padStart(6, '0'));
+      this.valores[i]!.setText(String(Math.round(v))).setColor(hex(color));
       g.fillStyle(PAL.carbon);
       g.fillRect(x + 72, 34, 80, 8);
       g.fillStyle(color);
@@ -128,10 +169,19 @@ export class SalaScene extends Phaser.Scene {
     });
     this.reloj.setText(`${t('reloj.dia', { dia: s.day })} · ${hora(s.hour)}`);
     this.pausa.setText(this.ses.paused ? t('reloj.pausa') : this.ses.speed !== 1 ? `×${this.ses.speed}` : '');
+    const nBorrador = Object.keys(s.draftLevers).length;
+    this.borrador.setText(nBorrador > 0 ? t('sala.borrador', { n: nBorrador }) : t('sala.sinBorrador')).setColor(hex(nBorrador > 0 ? PAL.mostaza : PAL.crema));
     this.vsm.refresh();
     this.pais.refresh();
-    this.tablero.refresh(this.parpadeo);
-    this.monitores.refresh(this.parpadeo);
+    this.refrescarTableros();
+
+    this.capa.setVisible(this.ficha !== undefined);
+    this.contenido.removeAll(true);
+    if (this.ficha) {
+      const x = { scene: this, c: this.contenido, ses: this.ses, abrir: (f: FichaId) => this.abrir(f), ui: this.ui };
+      this.tituloFicha.setText(tituloFicha(this.ficha, x));
+      dibujarFicha(this.ficha, x);
+    }
   }
 
   override update(_time: number, delta: number): void {
@@ -142,16 +192,20 @@ export class SalaScene extends Phaser.Scene {
       this.scene.start('DayReport');
       return;
     }
-    this.acc += delta;
-    if (this.acc >= PARPADEO_MS) {
-      this.acc = 0;
-      this.parpadeo = !this.parpadeo;
-      this.dirty = true;
-    }
     if (this.dirty) {
       this.dirty = false;
       this.refrescar();
     }
+    this.acc += delta;
+    if (this.acc >= PARPADEO_MS) {
+      this.acc = 0;
+      this.parpadeo = !this.parpadeo;
+      this.refrescarTableros();
+    }
+    const err = this.ses.lastError;
+    const visible = err !== undefined && this.ses.now - err.realMs < ERROR_MS;
+    this.aviso.setVisible(visible);
+    if (visible) this.aviso.setText(t(`error.${err.code}`));
     this.pais.update(delta, this.ses.paused);
   }
 }

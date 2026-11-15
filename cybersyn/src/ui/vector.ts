@@ -82,3 +82,40 @@ export function monitor(scene: Phaser.Scene, x: number, y: number, w: number, h:
   }
   return c;
 }
+
+export interface VButtonOpts { bg?: number; fg?: number; enabled?: boolean; size?: number; font?: string }
+
+/** Botón plano. El clic se despacha en pointerdown. */
+export function vbutton(scene: Phaser.Scene, x: number, y: number, w: number, h: number, label: string, onClick: () => void, o: VButtonOpts = {}): Phaser.GameObjects.Container {
+  const on = o.enabled !== false;
+  const c = scene.add.container(x, y);
+  const r = scene.add.rectangle(0, 0, w, h, on ? o.bg ?? PAL.carbon : PAL.negro).setOrigin(0).setStrokeStyle(2, on ? PAL.gris : PAL.carbon);
+  c.add([r, vtext(scene, w / 2, h / 2, label, o.size ?? 16, { color: on ? o.fg ?? PAL.crema : PAL.gris, origin: [0.5, 0.5], font: o.font, spacing: 1 })]);
+  if (on) {
+    r.setInteractive({ useHandCursor: true });
+    r.on('pointerdown', onClick);
+    r.on('pointerover', () => r.setStrokeStyle(2, PAL.blanco));
+    r.on('pointerout', () => r.setStrokeStyle(2, PAL.gris));
+  }
+  return c;
+}
+
+/** [−] valor [+] */
+export function vstepper(scene: Phaser.Scene, x: number, y: number, value: string, cambiado: boolean, onStep: (dir: 1 | -1) => void, ancho = 56): Phaser.GameObjects.Container {
+  const c = scene.add.container(x, y);
+  c.add([
+    vbutton(scene, 0, 0, 26, 26, '−', () => onStep(-1), { size: 20 }),
+    vtext(scene, 26 + ancho / 2, 13, value, 20, { color: cambiado ? PAL.naranjo : PAL.blanco, origin: [0.5, 0.5], bold: true }),
+    vbutton(scene, 26 + ancho, 0, 26, 26, '+', () => onStep(1), { size: 20 }),
+  ]);
+  return c;
+}
+
+/** Texto con ajuste de línea. */
+export function vparrafo(scene: Phaser.Scene, x: number, y: number, s: string, size: number, ancho: number, o: VTextOpts = {}): Phaser.GameObjects.Text {
+  const tx = vtext(scene, x, y, s, size, o);
+  tx.setWordWrapWidth(ancho).setLineSpacing(3);
+  return tx;
+}
+
+export const hex = (c: number): string => css(c);

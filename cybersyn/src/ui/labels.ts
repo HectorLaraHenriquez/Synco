@@ -22,6 +22,8 @@ export function nombreSerie(ctx: Ctx, s: GameState, serie: string): string {
   return `${nombreNodo(ctx, s, serie.slice(0, i))} · ${t(`ind.${serie.slice(i + 1)}`)}`;
 }
 
+export const fmt = (v: number, d = 0): string => v.toFixed(d).replace('.', ',');
+
 export const hora = (h: number): string => {
   const m = Math.round(h * 60);
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import { H, W, newGame } from '../game/app';
+import { newGame, resumeGame, VH, VW } from '../game/app';
+import { loadGame } from '../save/save';
 import { t } from '../ui/i18n';
 import { PAL } from '../ui/palette';
-import { legacyCamera, txt, textW } from '../ui/text';
-import { Button } from '../ui/widgets/Button';
+import { FONT_TITULO, SIMBOLOS, simbolo, vbutton, vtext } from '../ui/vector';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -11,28 +11,31 @@ export class MenuScene extends Phaser.Scene {
   }
   create(): void {
     this.cameras.main.setBackgroundColor(PAL.negro);
-    legacyCamera(this);
-    // Opsroom en penumbra: hexágono y sillas como bloques geométricos.
     const g = this.add.graphics();
+    // La sala en penumbra: hexágono, siete sillas y una franja naranja.
     g.fillStyle(PAL.carbon);
-    g.fillPoints(Array.from({ length: 6 }, (_, i) => new Phaser.Math.Vector2(W / 2 + 150 * Math.cos((Math.PI / 3) * i), 150 + 70 * Math.sin((Math.PI / 3) * i))), true);
-    g.fillStyle(PAL.cafe);
-    for (let i = 0; i < 7; i++) g.fillCircle(W / 2 + 70 * Math.cos((2 * Math.PI * i) / 7), 150 + 30 * Math.sin((2 * Math.PI * i) / 7), 6);
+    g.fillPoints(Array.from({ length: 6 }, (_, i) => new Phaser.Math.Vector2(VW / 2 + 430 * Math.cos((Math.PI / 3) * i), 470 + 230 * Math.sin((Math.PI / 3) * i))), true);
+    for (let i = 0; i < 7; i++) {
+      const a = (2 * Math.PI * i) / 7 - Math.PI / 2;
+      g.fillStyle(PAL.blanco);
+      g.fillCircle(VW / 2 + 190 * Math.cos(a), 470 + 96 * Math.sin(a), 30);
+      g.fillStyle(PAL.naranjo);
+      g.fillCircle(VW / 2 + 190 * Math.cos(a), 470 + 96 * Math.sin(a), 18);
+    }
     g.fillStyle(PAL.naranjo);
-    g.fillRect(0, 0, W, 6);
+    g.fillRect(0, 0, VW, 14);
+    SIMBOLOS.forEach((s, i) => simbolo(g, s, VW / 2 - 120 + i * 60, 236, 16, PAL.crema, i % 2 === 0));
 
-    const titulo = t('menu.titulo');
-    txt(this, (W - textW(titulo, 3)) / 2, 24, titulo, PAL.crema, 3);
-    const sub = t('menu.subtitulo');
-    txt(this, (W - textW(sub)) / 2, 54, sub, PAL.naranjo);
+    vtext(this, VW / 2, 110, t('menu.titulo'), 120, { bold: true, font: FONT_TITULO, origin: [0.5, 0.5], spacing: 14 });
+    vtext(this, VW / 2, 188, t('menu.subtitulo'), 26, { color: PAL.naranjo, origin: [0.5, 0.5], spacing: 6 });
 
-    const start = (): void => {
-      newGame();
-      this.scene.start('Sala');
-    };
-    new Button(this, W / 2 - 60, 200, t('menu.nueva'), start, { w: 120, h: 15, bg: PAL.naranjo, fg: PAL.negro });
-    const pie = t('menu.pie');
-    txt(this, (W - textW(pie)) / 2, H - 14, pie, PAL.gris);
-    this.input.keyboard?.once('keydown-ENTER', start);
+    const nueva = (): void => { newGame(); this.scene.start('City'); };
+    const guardada = loadGame();
+    vbutton(this, VW / 2 - 180, 610, 360, 56, t('menu.nueva'), nueva, { bg: PAL.naranjo, fg: PAL.negro, size: 26, font: FONT_TITULO });
+    if (guardada) {
+      vbutton(this, VW / 2 - 180, 678, 360, 48, t('menu.continuar', { dia: guardada.day }), () => { resumeGame(guardada); this.scene.start('City'); }, { size: 20 });
+    }
+    vtext(this, VW / 2, VH - 30, t('menu.pie'), 16, { color: PAL.gris, origin: [0.5, 0.5] });
+    this.input.keyboard?.once('keydown-ENTER', nueva);
   }
 }

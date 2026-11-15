@@ -1,13 +1,11 @@
 import Phaser from 'phaser';
-import { app, session, W } from '../game/app';
+import { app, session, VW } from '../game/app';
+import { clearSave } from '../save/save';
 import { INDICATOR_KEYS } from '../sim/state';
-import { wrap } from '../ui/glyphs';
 import { t } from '../ui/i18n';
+import { fmt } from '../ui/labels';
 import { PAL } from '../ui/palette';
-import { fmt } from '../ui/panels/Panel';
-import { legacyCamera, txt } from '../ui/text';
-import { bar } from '../ui/widgets/Bar';
-import { Button } from '../ui/widgets/Button';
+import { FONT_TITULO, SIMBOLOS, simbolo, vbutton, vparrafo, vtext } from '../ui/vector';
 
 /** Cierre: informe impreso con la variación real de los indicadores, Checo dijo/pasó y voces. */
 export class DayReportScene extends Phaser.Scene {
@@ -18,43 +16,53 @@ export class DayReportScene extends Phaser.Scene {
     const ses = session();
     const { antes, snap } = app.lastClose!;
     this.cameras.main.setBackgroundColor(PAL.carbon);
-    legacyCamera(this);
-    this.add.rectangle(20, 6, W - 40, 258, PAL.crema).setOrigin(0).setStrokeStyle(1, PAL.negro);
-    this.add.rectangle(20, 6, W - 40, 4, PAL.naranjo).setOrigin(0);
-    const X = 30;
-    txt(this, X, 16, t('cierre.titulo', { dia: snap.day }), PAL.negro, 2);
-    txt(this, X, 36, t('cierre.col.indicador'), PAL.cafe);
-    txt(this, X + 238, 36, t('cierre.col.ayerHoy'), PAL.cafe);
-    txt(this, X + 300, 36, t('cierre.col.var'), PAL.cafe);
-    if (snap.checo) txt(this, X + 344, 36, t('cierre.col.checo'), PAL.azul);
+    const X = 220, W = VW - 440;
+    const g = this.add.graphics();
+    g.fillStyle(PAL.crema);
+    g.fillRect(X, 30, W, 750);
+    g.fillStyle(PAL.naranjo);
+    g.fillRect(X, 30, W, 12);
+    vtext(this, X + 40, 62, t('cierre.titulo', { dia: snap.day }), 46, { color: PAL.negro, bold: true, font: FONT_TITULO, spacing: 4 });
+    vtext(this, X + 40, 124, t('cierre.col.indicador'), 15, { color: PAL.cafe, spacing: 1 });
+    vtext(this, X + 640, 124, t('cierre.col.ayerHoy'), 15, { color: PAL.cafe, spacing: 1 });
+    vtext(this, X + 790, 124, t('cierre.col.var'), 15, { color: PAL.cafe, spacing: 1 });
+    if (snap.checo) vtext(this, X + 880, 124, t('cierre.col.checo'), 15, { color: PAL.azul, spacing: 1 });
 
     INDICATOR_KEYS.forEach((k, i) => {
-      const y = 46 + i * 10;
+      const y = 152 + i * 40;
       const a = antes[k], b = snap.indicators[k], d = b - a;
-      txt(this, X, y, t(`ind.${k}`).padEnd(24), PAL.negro);
-      bar(this, X + 150, y + 1, 80, 5, b, PAL.carbon, PAL.gris);
-      txt(this, X + 238, y, `${fmt(a).padStart(3)} → ${fmt(b).padStart(3)}`, PAL.negro);
-      txt(this, X + 300, y, `${d >= 0 ? '+' : ''}${fmt(d, 1)}`, Math.abs(d) < 0.5 ? PAL.cafe : d > 0 ? PAL.verde_osc : PAL.rojo);
-      if (snap.checo) txt(this, X + 344, y, fmt(snap.checo.dijo[k]).padStart(4), PAL.azul);
+      simbolo(g, SIMBOLOS[i % SIMBOLOS.length]!, X + 52, y + 13, 10, PAL.negro, true);
+      vtext(this, X + 76, y, t(`ind.${k}`), 24, { color: PAL.negro });
+      g.fillStyle(PAL.gris);
+      g.fillRect(X + 370, y + 8, 240, 12);
+      g.fillStyle(PAL.carbon);
+      g.fillRect(X + 370, y + 8, (240 * b) / 100, 12);
+      vtext(this, X + 640, y, `${fmt(a)} → ${fmt(b)}`, 24, { color: PAL.negro });
+      vtext(this, X + 790, y, `${d >= 0 ? '+' : ''}${fmt(d, 1)}`, 24, { color: Math.abs(d) < 0.5 ? PAL.cafe : d > 0 ? PAL.verde_osc : PAL.rojo, bold: true });
+      if (snap.checo) vtext(this, X + 880, y, fmt(snap.checo.dijo[k]), 24, { color: PAL.azul });
     });
-    let y = 46 + 7 * 10 + 4;
-    txt(this, X, y, t('cierre.calidad', { v: fmt(snap.calidadVida), infl: fmt(snap.inflacionMensual * 100, 1), alertas: snap.alertas.length }), PAL.cafe);
+    let y = 152 + 7 * 40 + 10;
+    vtext(this, X + 40, y, t('cierre.calidad', { v: fmt(snap.calidadVida), infl: fmt(snap.inflacionMensual * 100, 1), alertas: snap.alertas.length }), 18, { color: PAL.cafe });
+    y += 28;
+    if (snap.checo) { vtext(this, X + 40, y, t('cierre.checoNota', { dia: snap.checo.hechoElDia }), 16, { color: PAL.azul }); y += 26; }
     y += 10;
-    if (snap.checo) { txt(this, X, y, t('cierre.checoNota', { dia: snap.checo.hechoElDia }), PAL.azul); y += 10; }
-
-    y += 4;
-    txt(this, X, y, t('cierre.voces'), PAL.cafe);
-    y += 10;
+    vtext(this, X + 40, y, t('cierre.voces'), 16, { color: PAL.cafe, spacing: 2 });
+    y += 28;
     for (const v of snap.voces) {
-      for (const linea of wrap(`«${v.texto}»`, 68)) { txt(this, X, y, linea, v.tono === 'NEG' ? PAL.rojo : PAL.verde_osc); y += 9; }
+      const p = vparrafo(this, X + 56, y, `«${v.texto}»`, 19, W - 110, { color: PAL.negro });
+      g.fillStyle(v.tono === 'NEG' ? PAL.rojo : PAL.verde_osc);
+      g.fillRect(X + 40, y + 2, 6, p.height - 4);
+      y += p.height + 10;
     }
 
     const fin = ses.state.ending;
     const terminado = ses.over;
-    if (fin) txt(this, X, 232, t(`fin.${fin.id}`), PAL.rojo);
-    else if (terminado) txt(this, X, 232, t('fin.CAMPANA'), PAL.verde_osc);
-    const next = (): void => { this.scene.start(terminado ? 'Menu' : 'Sala'); };
-    new Button(this, W - 150, 244, t(terminado ? 'cierre.menu' : 'cierre.continuar'), next, { w: 120, h: 14, bg: PAL.naranjo, fg: PAL.negro });
+    if (terminado) {
+      clearSave();
+      vparrafo(this, X + 40, 668, t(fin ? `fin.${fin.id}` : 'fin.CAMPANA'), 22, 560, { color: fin ? PAL.rojo : PAL.verde_osc, bold: true });
+    }
+    const next = (): void => { this.scene.start(terminado ? 'Menu' : 'City'); };
+    vbutton(this, X + W - 340, 708, 300, 52, t(terminado ? 'cierre.menu' : 'cierre.continuar'), next, { bg: PAL.naranjo, fg: PAL.negro, size: 22, font: FONT_TITULO });
     this.input.keyboard?.once('keydown-ENTER', next);
   }
 }

@@ -19,8 +19,9 @@ export class Session {
   private realMs = 0;
   private listeners = new Set<() => void>();
 
-  constructor(readonly engine: Engine, seed: string, difficulty: Difficulty = 'NORMAL') {
-    this.state = engine.init(seed, difficulty);
+  /** `inicio` puede ser una semilla (partida nueva) o un estado guardado. */
+  constructor(readonly engine: Engine, inicio: string | GameState, difficulty: Difficulty = 'NORMAL') {
+    this.state = typeof inicio === 'string' ? engine.init(inicio, difficulty) : inicio;
     this.inicioDia = { ...this.state.indicators };
   }
 

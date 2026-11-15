@@ -35,18 +35,23 @@ Juego de gestión económica pausable, jugado desde la Opsroom (Chile 1974–76,
 - Los números visibles deben pasar por `report()` (H2); la UI no lee valores reales salvo en nodos investigados.
 
 ## Dirección visual (decisión del autor, posterior al GDD)
-- No es obligatorio el pixel art: la referencia son las **diapositivas retroiluminadas de la Opsroom real** (Bauhaus, años 70, retrofuturismo). Formas planas, símbolos (○ □ ▽ △ ⬠), diagramas de flujo tipo sistema nervioso. Debe ser intuitivo, no un muro de tablas.
-- El juego corre a 1440×810 vectorial (`src/ui/vector.ts`, fuentes Jost y Barlow Condensed). Paleta de 12 colores intacta.
-- `SalaScene` es la vista principal: la sala dibujada, con pantallas vivas (VSM, ventana al país, tablero de símbolos, monitores). Cada pantalla abre su panel de detalle.
-- Los paneles de detalle, la consola, el menú y el cierre siguen en pixel art 480×270 (cámara ×3): **pendiente migrarlos al estilo nuevo** si el autor lo confirma.
+- Sin pixel art: la referencia son las **diapositivas retroiluminadas de la Opsroom real** (Bauhaus, años 70, retrofuturismo). Formas planas, símbolos (○ □ ▽ △ ⬠), diagramas tipo sistema nervioso. Intuitivo, no un muro de tablas.
+- 1440×810 vectorial (`src/ui/vector.ts`, fuentes Jost y Barlow Condensed). Paleta fija de 12 colores.
 - Un tablero en calma muestra sólo contornos; lo que se enciende pide atención.
+
+## Flujo de escenas
+`Menu → [City (boletín del día + voces) → Sala (jornada) → DayReport (cierre)] × 30 → Menu`
+- **City**: Santiago a lo lejos. Es la pantalla de la **historia** (boletín, voces; el autor agregará crecimiento de la ciudad, globos de diálogo, etc.). No controla la economía.
+- **Sala**: la Opsroom dibujada, con pantallas vivas (VSM, ventana al país, tablero de símbolos, monitores). Todo se maneja con **fichas** (`src/ui/fichas.ts`) que se abren encima: consola de palancas, señales, Checo, alertas, sector (investigar, autonomía, invertir) y zona (investigar, prioridad).
+- Guardado automático en localStorage al abrir cada día (`src/save/save.ts`).
 
 ## Comandos
 - `npm run dev` · `npm test` · `npm run typecheck` · `npm run sim -- --policy none|reasonable --seed X --days 30`
 
 ## Estado
-- **H1, H2 y H3 (esqueleto Phaser con placeholders): hechos.** `npm run dev` para jugar; `?speed=N` acelera el reloj.
-- UI: `src/game` (sesión y reloj, sin Phaser), `src/scenes`, `src/ui` (paleta, fuente bitmap 5×7 propia, paneles, consola). Textos en `public/data/ui/es.json`.
+- **H1, H2, H3 y versión jugable básica: hechos.** `npm run dev` para jugar; `?speed=N` acelera el reloj.
+- UI: `src/game` (sesión, reloj y boletín, sin Phaser), `src/scenes`, `src/ui`. Textos en `public/data/ui/es.json`.
+- Falta respecto del GDD: tooltips, télex, Consejo nocturno y tecnología (H5); sabotaje, facciones, eventos guionados, clímax y finales completos (H6); audio (H7).
 - Prueba de humo en navegador: `npx vite build && npx vite preview --port 4173 &` y luego `node tools/e2e-smoke.cjs`.
 - Pendiente de hitos posteriores: télex, Consejo y tecnología (H5); sabotaje, facciones, eventos, red y finales completos (H6). `TELEX_ACTION`, `COUNCIL_CHOICE` y `START_RESEARCH` responden `NO_IMPLEMENTADO`.
 - Desviaciones conscientes del GDD:

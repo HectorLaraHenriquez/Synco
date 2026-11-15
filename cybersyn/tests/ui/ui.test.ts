@@ -2,7 +2,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { Session } from '../../src/game/session';
-import { CHARS, GLYPHS, GLYPH_H, GLYPH_W, sanitize, wrap } from '../../src/ui/glyphs';
+import { buildBulletin } from '../../src/game/bulletin';
+import { clearSave, loadGame, saveGame, type Store } from '../../src/save/save';
 import { setStrings, t } from '../../src/ui/i18n';
 import { PAL } from '../../src/ui/palette';
 import { data, engine } from '../sim/helpers';
@@ -10,36 +11,7 @@ import { data, engine } from '../sim/helpers';
 const strings = JSON.parse(readFileSync('public/data/ui/es.json', 'utf8')) as Record<string, string>;
 const files = (dir: string): string[] =>
   readdirSync(dir).flatMap((f) => (statSync(join(dir, f)).isDirectory() ? files(join(dir, f)) : [join(dir, f)]));
-const fuentes = [...files('src/ui'), ...files('src/scenes')].map((f) => readFileSync(f, 'utf8')).join('\n');
-
-describe('fuente bitmap', () => {
-  it('cada glifo mide 5×7 y sólo usa # y .', () => {
-    for (const [ch, rows] of Object.entries(GLYPHS)) {
-      expect(rows, ch).toHaveLength(GLYPH_H);
-      for (const r of rows) expect(r, ch).toMatch(new RegExp(`^[#.]{${GLYPH_W}}$`));
-    }
-  });
-  it('cubre ASCII imprimible y el español', () => {
-    for (let c = 32; c < 127; c++) expect(CHARS.includes(String.fromCharCode(c)), String.fromCharCode(c)).toBe(true);
-    for (const ch of 'áéíóúüñÁÉÍÓÚÑ¿¡«»°·→') expect(CHARS.includes(ch), ch).toBe(true);
-  });
-  it('todos los textos del juego se pueden dibujar', () => {
-    const textos = [
-      ...Object.values(strings),
-      ...data.sectors.flatMap((s) => [s.nombre, ...s.ramas.map((r) => r.nombre)]),
-      ...data.zones.flatMap((z) => [z.nombre, ...z.lugares]),
-      ...data.firms.map((f) => f.nombre),
-      ...data.algedonic.flatMap((a) => [a.causa, ...a.opciones.map((o) => o.texto)]),
-      ...data.voices.plantillas.map((p) => p.texto), ...data.voices.bienes, ...data.voices.dias,
-    ];
-    for (const s of textos) expect(sanitize(s), s).toBe(s);
-  });
-  it('sanitize reemplaza lo que no tiene glifo; wrap corta por palabras', () => {
-    expect(sanitize('a—b…c☃')).toBe('a-b...c?');
-    expect(wrap('uno dos tres cuatro', 8)).toEqual(['uno dos', 'tres', 'cuatro']);
-    expect(wrap('abcdefghijkl', 5)).toEqual(['abcde', 'fghij', 'kl']);
-  });
-});
+const fuentes = [...files('src/ui'), ...files('src/scenes'), ...files('src/game')].map((f) => readFileSync(f, 'utf8')).join('\n');
 
 describe('textos en JSON', () => {
   it('toda clave literal usada en la UI existe en es.json', () => {
@@ -49,9 +21,15 @@ describe('textos en JSON', () => {
   });
   it('las familias de claves dinámicas están completas', () => {
     const req = [
-      ...['produccion', 'abastecimiento', 'estabilidadPrecios', 'divisas', 'estabilidadRed', 'animo', 'soberania'].flatMap((k) => [`ind.${k}`, `ind.corto.${k}`]),
-      ...['datafeed', 'cyberstride', 'checo', 'algedonico', 'cyberfolk', 'red'].flatMap((p) => [`panel.${p}.titulo`, `panel.${p}.corto`]),
-      ...['precios', 'metas', 'asignacionDivisas', 'emision', 'fiscalizacion', 'shareExportCobre', 'reajusteSalarial', 'zonasPrioritarias', 'inversiones'].map((k) => `palanca.${k}`),
+      ...['produccion', 'abastecimiento', 'estabilidadPrecios', 'divisas', 'estabilidadRed', 'animo', 'soberania'].map((k) => `ind.${k}`),
+      ...['consola', 'algedonico', 'checo', 'stride'].map((p) => `ficha.${p}.titulo`),
+      ...['precios', 'metas', 'asignacionDivisas', 'emision', 'fiscalizacion', 'shareExportCobre', 'reajusteSalarial', 'zonasPrioritarias', 'inversiones', 'autonomia'].flatMap((k) => [`palanca.${k}`, `boletin.nuevo.${k}`]),
+      ...['precios', 'metas', 'asignacionDivisas', 'emision', 'fiscalizacion', 'shareExportCobre', 'reajusteSalarial', 'zonasPrioritarias'].map((k) => `palanca.ayuda.${k}`),
+      ...['AUTOGESTION', 'COORDINADO', 'CENTRALIZADO'].flatMap((k) => [`autonomia.${k}`, `autonomia.ayuda.${k}`]),
+      ...['inicio', 'abastecimiento', 'inflacion', 'animo', 'divisas', 'produccion', 'calma'].flatMap((k) => [`boletin.titular.${k}`, `boletin.objetivo.${k}`]),
+      ...['checo', 'red', 'cyberfolk'].map((k) => `boletin.nuevo.pantalla.${k}`),
+      ...['produccion', 'insumos', 'moral', 'datos', 'senal'].map((k) => `ficha.sector.${k}`),
+      'boletin.jefa.dia1', 'boletin.jefa.dia2', 'boletin.jefa.dia3', 'fin.CAMPANA',
       ...['BAJO', 'MEDIO', 'ALTO', 'OFF', 'RACIONAMIENTO', 'ESTRICTO'].map((k) => `valor.${k}`),
       ...['BASICOS', 'MANUFACTURAS', 'SERVICIOS'].map((k) => `precio.${k}`),
       ...['produccion', 'abastecimiento', 'estabilidadPrecios', 'divisas', 'estabilidadRed', 'animo', 'soberania'].map((k) => `ind.franja.${k}`),
@@ -75,7 +53,7 @@ describe('textos en JSON', () => {
   });
   it('la UI no usa colores fuera de la paleta', () => {
     expect(Object.keys(PAL)).toHaveLength(12);
-    const sinPaleta = [...files('src/ui'), ...files('src/scenes')].filter((f) => !f.endsWith('palette.ts')).map((f) => readFileSync(f, 'utf8')).join('\n');
+    const sinPaleta = [...files('src/ui'), ...files('src/scenes'), ...files('src/game')].filter((f) => !f.endsWith('palette.ts')).map((f) => readFileSync(f, 'utf8')).join('\n');
     expect(sinPaleta).not.toMatch(/0x[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{6}\b/);
   });
 });
@@ -136,5 +114,38 @@ describe('tablero de símbolos', () => {
     expect(estadoSector(s, engine.ctx, 'ENT').senal).toBe(2);
     s.algedonic[0]!.atendida = true;
     expect(estadoSector(s, engine.ctx, 'ENT').senal).toBe(1);
+  });
+});
+
+describe('boletín y guardado', () => {
+  it('el boletín del día 1 presenta la sala; el del día 2 anuncia la palanca de precios', () => {
+    const b1 = buildBulletin(engine.init('b'), engine.ctx);
+    expect(b1).toMatchObject({ titular: 'boletin.titular.inicio', jefa: 'boletin.jefa.dia1' });
+    expect(b1.novedades).toContain('boletin.nuevo.metas');
+    const b2 = buildBulletin(engine.runDay(engine.init('b')), engine.ctx);
+    expect(b2.novedades).toEqual(['boletin.nuevo.precios']);
+    expect(b2.titular).not.toBe('boletin.titular.inicio');
+  });
+  it('el titular sigue al peor problema', () => {
+    const s = structuredClone(engine.runDay(engine.init('b')));
+    for (const z of Object.values(s.zones)) z.abastecimiento = 30;
+    expect(buildBulletin(s, engine.ctx).titular).toBe('boletin.titular.abastecimiento');
+  });
+  it('guardar y cargar devuelve el mismo estado; versiones ajenas se descartan', () => {
+    const mem = new Map<string, string>();
+    const store: Store = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v), removeItem: (k) => void mem.delete(k) };
+    expect(loadGame(store)).toBeUndefined();
+    const s = engine.runDay(engine.init('g'));
+    expect(saveGame(s, store)).toBe(true);
+    const cargado = loadGame(store)!;
+    expect(cargado).toEqual(JSON.parse(JSON.stringify(s)));
+    // La partida cargada sigue siendo determinista.
+    expect(JSON.stringify(engine.runDay(cargado))).toBe(JSON.stringify(engine.runDay(s)));
+    const ses = new Session(engine, cargado);
+    expect(ses.state.day).toBe(2);
+    saveGame({ ...s, version: 999 }, store);
+    expect(loadGame(store)).toBeUndefined();
+    clearSave(store);
+    expect(mem.size).toBe(0);
   });
 });

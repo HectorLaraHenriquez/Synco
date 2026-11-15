@@ -4,10 +4,9 @@ import '@fontsource/jost/500.css';
 import '@fontsource/jost/700.css';
 import '@fontsource/barlow-condensed/500.css';
 import { app, initApp, VH, VW } from './game/app';
-import { BootScene } from './scenes/BootScene';
+import { CityScene } from './scenes/CityScene';
 import { DayReportScene } from './scenes/DayReportScene';
 import { MenuScene } from './scenes/MenuScene';
-import { OpsroomScene } from './scenes/OpsroomScene';
 import { SalaScene } from './scenes/SalaScene';
 import { setStrings } from './ui/i18n';
 import { css, PAL } from './ui/palette';
@@ -31,7 +30,7 @@ async function main(): Promise<void> {
     backgroundColor: css(PAL.negro),
     antialias: true,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, MenuScene, SalaScene, OpsroomScene, DayReportScene],
+    scene: [MenuScene, CityScene, SalaScene, DayReportScene],
   });
   (window as unknown as { __cybersyn: unknown }).__cybersyn = { app, game };
 }
